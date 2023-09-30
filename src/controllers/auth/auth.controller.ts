@@ -12,6 +12,7 @@ import {
   InvalidLoginError,
   NonExistUserError,
   PasswordMatchError,
+  InvalidRefreshTokenError,
 } from '../../error/auth';
 
 import {
@@ -24,19 +25,20 @@ import {
   SignUpSuccessMessage,
   SignInSuccessStatus,
   SignInSuccessMessage,
+  RefreshTokenSuccessStatus,
+  RefreshTokenSuccessMessage,
 } from '../../success/auth';
 
 import { logger } from '../../log';
 import { HASH_COIN } from '../../config';
 import { refreshTokenConfiguration } from '../../configuration';
-import { createRefreshToken, createToken } from '../../integrations/jwt';
+import { createRefreshToken, createToken, verifyRefreshToken } from '../../integrations/jwt';
 
 import { SignInSchema, SignUpSchema } from './auth.validator';
 import { ISignInUser, ISignUpUser } from './auth.interface';
 
 export const SignUpUserController = async (req: FastifyRequest<{ Body: ISignUpUser }>, reply: FastifyReply) => {
   try {
-    logger.info('Register user');
     const data = SignUpSchema.parse(req.body);
 
     const existUser = await prisma.user.findFirst({
@@ -61,17 +63,19 @@ export const SignUpUserController = async (req: FastifyRequest<{ Body: ISignUpUs
       data: {
         email: data.email,
         passwordHash,
-        role: data.role,
       },
     });
 
     reply
       .status(SignUpSuccessStatus)
       .send({
-        data: newUser,
         message: SignUpSuccessMessage,
+        user: newUser,
       });
   } catch (error) {
+    error instanceof Error &&
+      logger.error(error.message);
+
     error instanceof ZodError &&
       reply
         .status(ValidationErrorStatus)
@@ -138,6 +142,9 @@ export const SignInUserController = async (req: FastifyRequest<{ Body: ISignInUs
         user: findUser,
       });
   } catch (error) {
+    error instanceof Error &&
+      logger.error(error.message);
+
     error instanceof ZodError &&
       reply
         .status(ValidationErrorStatus)
@@ -165,5 +172,48 @@ export const SignInUserController = async (req: FastifyRequest<{ Body: ISignInUs
         .send({
           message: error.message,
         });
+  }
+};
+
+export const RefreshTokenController = async (req: FastifyRequest, reply: FastifyReply) => {
+  try {
+    if (req.cookies.refreshToken) {
+      const verifyToken = verifyRefreshToken(req.cookies.refreshToken);
+
+      if (typeof verifyToken === 'string') {
+        throw new InvalidRefreshTokenError();
+      }
+
+      const findUser = await prisma.user.findUnique({
+        where: {
+          id: verifyToken.userId,
+        },
+      });
+
+      if (!findUser) {
+        throw new NonExistUserError();
+      }
+
+      const accessToken = createToken(findUser);
+      const refreshToken = createRefreshToken(findUser);
+
+      reply
+        .status(RefreshTokenSuccessStatus)
+        .cookie('refreshToken', refreshToken,
+          {
+            httpOnly: refreshTokenConfiguration.httpOnly,
+            maxAge: refreshTokenConfiguration.maxAge,
+            sameSite: refreshTokenConfiguration.sameSite,
+            secure: refreshTokenConfiguration.secure,
+          },
+        )
+        .send({
+          message: RefreshTokenSuccessMessage,
+          token: accessToken,
+        });
+    }
+  } catch (error) {
+    error instanceof Error &&
+      logger.error(error.message);
   }
 };

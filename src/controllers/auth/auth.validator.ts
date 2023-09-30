@@ -1,6 +1,5 @@
 /* eslint-disable no-magic-numbers */
 
-import { UserRoleEnum } from '@prisma/client';
 import { z } from 'zod';
 
 export const SignUpSchema = z.object({
@@ -16,11 +15,6 @@ export const SignUpSchema = z.object({
     })
     .min(8)
     .nonempty(),
-  role: z
-    .enum([
-      UserRoleEnum.customer,
-      UserRoleEnum.executor,
-    ]),
 }).strict();
 
 export const SignInSchema = z.object({
