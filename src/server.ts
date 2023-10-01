@@ -5,9 +5,11 @@ import cookie from '@fastify/cookie';
 import { COOKIE_SECRET, SERVER_HOST, SERVER_PORT } from './config';
 import { logger } from './log';
 import { whitelistCORS } from './configuration';
-import { checkRouter } from './routes/check.routes';
+
 import { authRouter } from './routes/auth.routes';
 import { userRouter } from './routes/user.routes';
+import { checkRouter } from './routes/check.routes';
+import { orderRouter } from './routes/order.routes';
 import { specializationRouter } from './routes/specialization.routes';
 
 const server = fastify();
@@ -62,6 +64,10 @@ export const startServer = async () => {
 
     await server.register(specializationRouter, {
       prefix: '/api/specialization',
+    });
+
+    await server.register(orderRouter, {
+      prefix: '/api/order',
     });
 
     await server.ready().then(() => {
