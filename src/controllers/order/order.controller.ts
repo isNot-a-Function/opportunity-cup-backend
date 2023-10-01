@@ -316,7 +316,6 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
           customer: {
             userId: user.userId,
           },
-          status: 'active',
         },
       });
 
@@ -325,7 +324,6 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
           customer: {
             userId: user.userId,
           },
-          status: 'active',
         },
       });
 
@@ -350,7 +348,6 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
         customer: {
           userId: user.userId,
         },
-        status: 'active',
       },
     });
 
@@ -359,7 +356,6 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
         customer: {
           userId: user.userId,
         },
-        status: 'active',
       },
     });
 
