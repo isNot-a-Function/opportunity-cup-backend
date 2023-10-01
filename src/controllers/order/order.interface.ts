@@ -30,5 +30,9 @@ export interface IActiveOrder {
 }
 
 export interface IGetOrders {
-  page: number
+  page: number;
+}
+
+export interface IGetUserOrders {
+  userId: string;
 }

@@ -26,7 +26,7 @@ import {
   GetOrdersSchema,
   UpdateOrderSchema,
 } from './order.validator';
-import { IActiveOrder, IArchiveOrder, ICreateOrder, IGetOrders, IUpdateOrder } from './order.interface';
+import { IActiveOrder, IArchiveOrder, ICreateOrder, IGetOrders, IGetUserOrders, IUpdateOrder } from './order.interface';
 
 export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateOrder }>, reply: FastifyReply) => {
   try {
@@ -233,9 +233,16 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
           customer: true,
           specialization: true,
         },
+        where: {
+          status: 'active',
+        },
       });
 
-      const ordersCount = await prisma.order.count();
+      const ordersCount = await prisma.order.count({
+        where: {
+          status: 'active',
+        },
+      });
 
       reply
         .status(DataSendSuccessStatus)
@@ -254,15 +261,197 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
       },
       skip: 15 * (data.page - 1),
       take: 15,
+      where: {
+        status: 'active',
+      },
     });
 
-    const ordersCount = await prisma.order.count();
+    const ordersCount = await prisma.order.count({
+      where: {
+        status: 'active',
+      },
+    });
 
     reply
-      .status(UpdateOrderSuccessStatus)
+      .status(DataSendSuccessStatus)
       .send({
         count: ordersCount,
-        message: UpdateOrderSuccessMessage,
+        message: DataSendSuccessMessage,
+        orders,
+      });
+  } catch (error) {
+    error instanceof Error &&
+      logger.error(error.message);
+
+    error instanceof ZodError &&
+      reply
+        .status(ValidationErrorStatus)
+        .send({
+          message: ValidationErrorMessage,
+        });
+  }
+};
+
+export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: IGetOrders }>, reply: FastifyReply) => {
+  try {
+    if (!req.headers.authorization) {
+      throw new NotAuthorizedError();
+    }
+
+    const user = verifyAccessToken(req.headers.authorization);
+
+    if (typeof user === 'string') {
+      throw new NotAuthorizedError();
+    }
+
+    const data = GetOrdersSchema.parse(req.query);
+
+    if (!data.page) {
+      const orders = await prisma.order.findMany({
+        include: {
+          customer: true,
+          specialization: true,
+        },
+        where: {
+          customer: {
+            userId: user.userId,
+          },
+          status: 'active',
+        },
+      });
+
+      const ordersCount = await prisma.order.count({
+        where: {
+          customer: {
+            userId: user.userId,
+          },
+          status: 'active',
+        },
+      });
+
+      reply
+        .status(DataSendSuccessStatus)
+        .send({
+          count: ordersCount,
+          message: DataSendSuccessMessage,
+          orders,
+        });
+      return;
+    }
+
+    const orders = await prisma.order.findMany({
+      include: {
+        customer: true,
+        specialization: true,
+      },
+      skip: 15 * (data.page - 1),
+      take: 15,
+      where: {
+        customer: {
+          userId: user.userId,
+        },
+        status: 'active',
+      },
+    });
+
+    const ordersCount = await prisma.order.count({
+      where: {
+        customer: {
+          userId: user.userId,
+        },
+        status: 'active',
+      },
+    });
+
+    reply
+      .status(DataSendSuccessStatus)
+      .send({
+        count: ordersCount,
+        message: DataSendSuccessMessage,
+        orders,
+      });
+  } catch (error) {
+    error instanceof Error &&
+      logger.error(error.message);
+
+    error instanceof ZodError &&
+      reply
+        .status(ValidationErrorStatus)
+        .send({
+          message: ValidationErrorMessage,
+        });
+  }
+};
+
+export const GetUserOrdersController = async (
+  req: FastifyRequest<{ Querystring: IGetOrders, Params: IGetUserOrders }>,
+  reply: FastifyReply,
+) => {
+  try {
+    const data = GetOrdersSchema.parse(req.query);
+
+    if (!data.page) {
+      const orders = await prisma.order.findMany({
+        include: {
+          customer: true,
+          specialization: true,
+        },
+        where: {
+          customer: {
+            userId: req.params.userId,
+          },
+          status: 'active',
+        },
+      });
+
+      const ordersCount = await prisma.order.count({
+        where: {
+          customer: {
+            userId: req.params.userId,
+          },
+          status: 'active',
+        },
+      });
+
+      reply
+        .status(DataSendSuccessStatus)
+        .send({
+          count: ordersCount,
+          message: DataSendSuccessMessage,
+          orders,
+        });
+      return;
+    }
+
+    const orders = await prisma.order.findMany({
+      include: {
+        customer: true,
+        specialization: true,
+      },
+      skip: 15 * (data.page - 1),
+      take: 15,
+      where: {
+        customer: {
+          userId: req.params.userId,
+        },
+        status: 'active',
+      },
+    });
+
+    const ordersCount = await prisma.order.count({
+      where: {
+        customer: {
+          userId: req.params.userId,
+        },
+        status: 'active',
+      },
+    });
+
+    reply
+      .status(DataSendSuccessStatus)
+      .send({
+        count: ordersCount,
+        message: DataSendSuccessMessage,
         orders,
       });
   } catch (error) {
