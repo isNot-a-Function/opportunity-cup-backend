@@ -300,7 +300,7 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
       reply
         .status(DataSendSuccessStatus)
         .send({
-          count: ordersCount,
+          count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
           message: DataSendSuccessMessage,
           orders,
         });
@@ -328,7 +328,7 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
     reply
       .status(DataSendSuccessStatus)
       .send({
-        count: ordersCount,
+        count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
         message: DataSendSuccessMessage,
         orders,
       });
@@ -383,7 +383,7 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
       reply
         .status(DataSendSuccessStatus)
         .send({
-          count: ordersCount,
+          count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
           message: DataSendSuccessMessage,
           orders,
         });
@@ -415,7 +415,7 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
     reply
       .status(DataSendSuccessStatus)
       .send({
-        count: ordersCount,
+        count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
         message: DataSendSuccessMessage,
         orders,
       });
@@ -465,7 +465,7 @@ export const GetUserOrdersController = async (
       reply
         .status(DataSendSuccessStatus)
         .send({
-          count: ordersCount,
+          count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
           message: DataSendSuccessMessage,
           orders,
         });
@@ -499,7 +499,7 @@ export const GetUserOrdersController = async (
     reply
       .status(DataSendSuccessStatus)
       .send({
-        count: ordersCount,
+        count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
         message: DataSendSuccessMessage,
         orders,
       });
