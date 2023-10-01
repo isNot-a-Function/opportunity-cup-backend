@@ -61,7 +61,13 @@ export const SignUpUserController = async (req: FastifyRequest<{ Body: ISignUpUs
 
     const newUser = await prisma.user.create({
       data: {
+        custoremInfo: {
+          create: {},
+        },
         email: data.email,
+        executorInfo: {
+          create: {},
+        },
         passwordHash,
       },
     });

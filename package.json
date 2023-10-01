@@ -8,8 +8,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "bun --hot ./src/index.ts",
-    "build": "bun build --minify --target=node --outdir=./build",
+    "dev": "tsnd --respawn ./src/index.ts",
+    "seed:specialization": "tsnd ./src/index.ts",
     "generate:prisma": "prisma generate",
     "migrate:up": "npx prisma migrate deploy",
     "migrate:dev": "npx prisma migrate dev"
