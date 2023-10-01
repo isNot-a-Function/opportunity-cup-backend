@@ -9,7 +9,7 @@
   "private": true,
   "scripts": {
     "dev": "tsnd --respawn ./src/index.ts",
-    "seed:specialization": "tsnd ./src/index.ts",
+    "seed:specialization": "tsnd ./src/seed.ts",
     "generate:prisma": "prisma generate",
     "migrate:up": "npx prisma migrate deploy",
     "migrate:dev": "npx prisma migrate dev"
