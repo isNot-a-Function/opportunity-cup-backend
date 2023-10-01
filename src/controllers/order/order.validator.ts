@@ -84,6 +84,12 @@ export const ActiveOrderSchema = z.object({
 
 export const GetOrdersSchema = z.object({
   page: z
-    .number()
+    .string()
     .optional(),
+}).strict();
+
+export const GetOrderSchema = z.object({
+  orderId: z
+    .string()
+    .nonempty(),
 }).strict();

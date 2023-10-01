@@ -29,8 +29,12 @@ export interface IActiveOrder {
   orderId: string;
 }
 
+export interface IGetOrder {
+  orderId: string;
+}
+
 export interface IGetOrders {
-  page: number;
+  page: string;
 }
 
 export interface IGetUserOrders {

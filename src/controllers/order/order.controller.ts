@@ -23,10 +23,11 @@ import {
   ActiveOrderSchema,
   ArchiveOrderSchema,
   CreateOrderSchema,
+  GetOrderSchema,
   GetOrdersSchema,
   UpdateOrderSchema,
 } from './order.validator';
-import { IActiveOrder, IArchiveOrder, ICreateOrder, IGetOrders, IGetUserOrders, IUpdateOrder } from './order.interface';
+import { IActiveOrder, IArchiveOrder, ICreateOrder, IGetOrder, IGetOrders, IGetUserOrders, IUpdateOrder } from './order.interface';
 
 export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateOrder }>, reply: FastifyReply) => {
   try {
@@ -223,6 +224,39 @@ export const ActiveOrderController = async (req: FastifyRequest<{ Body: IActiveO
   }
 };
 
+export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder }>, reply: FastifyReply) => {
+  try {
+    const data = GetOrderSchema.parse(req.params);
+
+    const order = await prisma.order.findUnique({
+      include: {
+        customer: true,
+        specialization: true,
+      },
+      where: {
+        id: data.orderId,
+      },
+    });
+
+    reply
+      .status(ActiveOrderSuccessStatus)
+      .send({
+        message: ActiveOrderSuccessMessage,
+        order,
+      });
+  } catch (error) {
+    error instanceof Error &&
+      logger.error(error.message);
+
+    error instanceof ZodError &&
+      reply
+        .status(ValidationErrorStatus)
+        .send({
+          message: ValidationErrorMessage,
+        });
+  }
+};
+
 export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGetOrders }>, reply: FastifyReply) => {
   try {
     const data = GetOrdersSchema.parse(req.query);
@@ -259,7 +293,7 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
         customer: true,
         specialization: true,
       },
-      skip: 15 * (data.page - 1),
+      skip: 15 * (Number(data.page) - 1),
       take: 15,
       where: {
         status: 'active',
@@ -342,7 +376,7 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
         customer: true,
         specialization: true,
       },
-      skip: 15 * (data.page - 1),
+      skip: 15 * (Number(data.page) - 1),
       take: 15,
       where: {
         customer: {
@@ -424,7 +458,7 @@ export const GetUserOrdersController = async (
         customer: true,
         specialization: true,
       },
-      skip: 15 * (data.page - 1),
+      skip: 15 * (Number(data.page) - 1),
       take: 15,
       where: {
         customer: {

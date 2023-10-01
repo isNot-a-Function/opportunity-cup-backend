@@ -4,6 +4,7 @@ import {
   ArchiveOrderController,
   CreateOrderController,
   GetMyOrdersController,
+  GetOrderController,
   GetOrdersController,
   GetUserOrdersController,
   UpdateOrderController,
@@ -20,9 +21,11 @@ export const orderRouter = (fastify: FastifyInstance, opts: any, next: (err?: Er
 
   fastify.get('/', GetOrdersController);
 
-  fastify.get('/:user', GetUserOrdersController);
-
   fastify.get('/my', GetMyOrdersController);
+
+  fastify.get('/profile/:userId', GetUserOrdersController);
+
+  fastify.get('/:orderId', GetOrderController);
 
   next();
 };
