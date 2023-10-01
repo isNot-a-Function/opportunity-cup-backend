@@ -2,11 +2,11 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
 
-import { DataSendSuccessMessage, DataSendSuccessStatus } from 'success/base';
 import prisma from '../../prisma';
 import { logger } from '../../log';
 
 import { ValidationErrorStatus, ValidationErrorMessage } from '../../error/base';
+import { DataSendSuccessMessage, DataSendSuccessStatus } from '../../success/base';
 import {
   ActiveOrderSuccessMessage,
   ActiveOrderSuccessStatus,
