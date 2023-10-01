@@ -18,7 +18,6 @@ export const verifyAccessToken = (accessToken: string) => {
 
 export const createRefreshToken = (user: User): string => {
   return sign({
-    role: user.role,
     userId: user.id,
   }, JWT_REFRESH_SECRET, {
     algorithm: 'HS256',

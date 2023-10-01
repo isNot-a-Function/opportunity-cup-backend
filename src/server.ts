@@ -7,6 +7,7 @@ import { logger } from './log';
 import { whitelistCORS } from './configuration';
 import { checkRouter } from './routes/check.routes';
 import { authRouter } from './routes/auth.routes';
+import { userRouter } from './routes/user.routes';
 
 const server = fastify();
 
@@ -52,6 +53,10 @@ export const startServer = async () => {
 
     await server.register(authRouter, {
       prefix: '/api/auth',
+    });
+
+    await server.register(userRouter, {
+      prefix: '/api/user',
     });
 
     await server.ready().then(() => {

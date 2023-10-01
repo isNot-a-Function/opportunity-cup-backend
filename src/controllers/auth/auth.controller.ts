@@ -82,7 +82,11 @@ export const SignUpUserController = async (req: FastifyRequest<{ Body: ISignUpUs
       .send({
         message: SignUpSuccessMessage,
         token: accessToken,
-        user: newUser,
+        user: {
+          email: newUser.email,
+          id: newUser.id,
+          role: newUser.role,
+        },
       });
   } catch (error) {
     error instanceof Error &&
@@ -151,7 +155,11 @@ export const SignInUserController = async (req: FastifyRequest<{ Body: ISignInUs
       .send({
         message: SignInSuccessMessage,
         token: accessToken,
-        user: findUser,
+        user: {
+          email: findUser.email,
+          id: findUser.id,
+          role: findUser.role,
+        },
       });
   } catch (error) {
     error instanceof Error &&
