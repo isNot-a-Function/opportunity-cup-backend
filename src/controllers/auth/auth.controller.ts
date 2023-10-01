@@ -66,10 +66,22 @@ export const SignUpUserController = async (req: FastifyRequest<{ Body: ISignUpUs
       },
     });
 
+    const accessToken = createToken(newUser);
+    const refreshToken = createRefreshToken(newUser);
+
     reply
       .status(SignUpSuccessStatus)
+      .cookie('refreshToken', refreshToken,
+        {
+          httpOnly: refreshTokenConfiguration.httpOnly,
+          maxAge: refreshTokenConfiguration.maxAge,
+          sameSite: refreshTokenConfiguration.sameSite,
+          secure: refreshTokenConfiguration.secure,
+        },
+      )
       .send({
         message: SignUpSuccessMessage,
+        token: accessToken,
         user: newUser,
       });
   } catch (error) {
