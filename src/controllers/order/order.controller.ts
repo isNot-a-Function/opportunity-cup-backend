@@ -27,7 +27,15 @@ import {
   GetOrdersSchema,
   UpdateOrderSchema,
 } from './order.validator';
-import { IActiveOrder, IArchiveOrder, ICreateOrder, IGetOrder, IGetOrders, IGetUserOrders, IUpdateOrder } from './order.interface';
+import {
+  IActiveOrder,
+  IArchiveOrder,
+  ICreateOrder,
+  IGetOrder,
+  IGetOrders,
+  IGetUserOrders,
+  IUpdateOrder,
+} from './order.interface';
 
 export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateOrder }>, reply: FastifyReply) => {
   try {
@@ -235,6 +243,17 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
       },
       where: {
         id: data.orderId,
+      },
+    });
+
+    await prisma.order.update({
+      data: {
+        views: {
+          increment: 1,
+        },
+      },
+      where: {
+        id: order.id,
       },
     });
 

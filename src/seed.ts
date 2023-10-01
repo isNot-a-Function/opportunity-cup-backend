@@ -3,7 +3,7 @@
 import { CostTypeEnum } from '@prisma/client';
 import prisma from './prisma';
 
-const seedSpecializayions = async () => {
+export const seedSpecializayions = async () => {
   await prisma.specialization.createMany({
     data: [
       {
@@ -114,7 +114,7 @@ const seedSpecializayions = async () => {
   });
 };
 
-const seedOrders = async () => {
+export const seedOrders = async () => {
   await prisma.order.createMany({
     data: [
       {
@@ -254,4 +254,5 @@ const seedOrders = async () => {
 };
 
 // seedSpecializayions();
+
 seedOrders();
