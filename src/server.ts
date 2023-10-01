@@ -18,7 +18,19 @@ export const startServer = async () => {
     });
 
     await server.register(cors, {
-      allowedHeaders: '*',
+      allowedHeaders: [
+        'Access-Control-Allow-Headers',
+        'Access-Control-Allow-Methods',
+        'Access-Control-Allow-Origin',
+        'Origin',
+        'Accept',
+        'launguage',
+        'X-Requested-With',
+        'Content-Type',
+        'Access-Control-Request-Method',
+        'Access-Control-Request-Headers',
+        'Authorization',
+      ],
       credentials: true,
       methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'],
       origin: (origin, callback) => {
