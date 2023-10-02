@@ -45,6 +45,8 @@ export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateO
 
     const user = verifyAccessToken(req.headers.authorization);
 
+    logger.error(user);
+
     if (typeof user === 'string') {
       throw new NotAuthorizedError();
     }
@@ -85,25 +87,11 @@ export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateO
         .send({
           message: ValidationErrorMessage,
         });
-
-      return;
     }
 
     if (error instanceof NotAuthorizedError) {
       reply
         .status(error.status)
-        .send({
-          message: error.message,
-        });
-
-      return;
-    }
-
-    if (error instanceof Error) {
-      logger.error(error.message);
-
-      reply
-        .status(400)
         .send({
           message: error.message,
         });
