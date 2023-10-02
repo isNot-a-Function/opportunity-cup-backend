@@ -299,6 +299,8 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
   try {
     const data = GetOrderSchema.parse(req.params);
 
+    const user = verifyAccessToken(req.headers.authorization);
+
     const order = await prisma.order.findUnique({
       include: {
         customer: true,
@@ -320,22 +322,66 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
       },
     });
 
-    const user = await prisma.user.findUnique({
-      include: {
-        contact: true,
-        custoremInfo: true,
-      },
-      where: {
-        id: order.customer.userId,
-      },
-    });
-
-    reply
-      .status(ActiveOrderSuccessStatus)
-      .send({
-        order,
-        user,
+    if (typeof user === 'string') {
+      const findUser = await prisma.user.findUnique({
+        include: {
+          contact: true,
+          custoremInfo: true,
+        },
+        where: {
+          id: order.customer.userId,
+        },
       });
+
+      reply
+        .send({
+          order,
+          user: findUser,
+        });
+
+      return;
+    }
+
+    if (order.customer.userId === user.userId) {
+      const findUser = await prisma.user.findUnique({
+        include: {
+          contact: true,
+          custoremInfo: true,
+        },
+        where: {
+          id: user.userId,
+        },
+      });
+
+      const responses = await prisma.response.findMany({
+        where: {
+          orderId: order.id,
+        },
+      });
+
+      reply
+        .send({
+          order,
+          responses,
+          user: findUser,
+        });
+    } else {
+      const findUser = await prisma.user.findUnique({
+        include: {
+          contact: true,
+          custoremInfo: true,
+        },
+        where: {
+          id: user.userId,
+        },
+      });
+
+      reply
+        .send({
+          order,
+          user: findUser,
+        });
+    }
   } catch (error) {
     if (error instanceof ZodError) {
       reply

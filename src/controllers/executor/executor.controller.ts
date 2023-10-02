@@ -135,7 +135,7 @@ export const ResponseOrderController = async (
     reply
       .status(200)
       .send({
-        user: findUser,
+        message: 'Отклик отправлен',
       });
   } catch (error) {
     if (error instanceof ZodError) {
