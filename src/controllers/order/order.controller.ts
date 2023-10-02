@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
+import { JwtPayload } from 'jsonwebtoken';
 
 import prisma from '../../prisma';
 import { logger } from '../../log';
@@ -44,9 +45,9 @@ export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateO
 
     const user = verifyAccessToken(req.headers.authorization);
 
-    console.log(user);
+    logger.info(user);
 
-    if (typeof user === 'string') {
+    if (!user || typeof user === 'string') {
       throw new NotAuthorizedError();
     }
 
