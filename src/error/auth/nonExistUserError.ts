@@ -5,6 +5,6 @@ export class NonExistUserError extends Error {
     super();
 
     this.message = 'Пользователя с таким логином или почтой не существует';
-    this.status = 400;
+    this.status = 401;
   }
 }

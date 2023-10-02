@@ -6,7 +6,7 @@ import prisma from '../../prisma';
 import { logger } from '../../log';
 
 import { ValidationErrorStatus, ValidationErrorMessage } from '../../error/base';
-import { DataSendSuccessMessage, DataSendSuccessStatus } from '../../success/base';
+import { DataSendSuccessStatus } from '../../success/base';
 import {
   ActiveOrderSuccessMessage,
   ActiveOrderSuccessStatus,
@@ -17,7 +17,7 @@ import {
   UpdateOrderSuccessMessage,
   UpdateOrderSuccessStatus,
 } from '../../success/order';
-import { NotAuthorizedError } from '../../error/auth';
+import { NonExistUserError, NotAuthorizedError } from '../../error/auth';
 import { verifyAccessToken } from '../../integrations/jwt';
 import {
   ActiveOrderSchema,
@@ -89,6 +89,16 @@ export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateO
       return;
     }
 
+    if (error instanceof NonExistUserError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+
+      return;
+    }
+
     if (error instanceof Error) {
       logger.error(error.message);
 
@@ -146,15 +156,35 @@ export const UpdateOrderController = async (req: FastifyRequest<{ Body: IUpdateO
         order: newOrder,
       });
   } catch (error) {
-    error instanceof Error &&
-      logger.error(error.message);
-
-    error instanceof ZodError &&
+    if (error instanceof ZodError) {
       reply
         .status(ValidationErrorStatus)
         .send({
           message: ValidationErrorMessage,
         });
+
+      return;
+    }
+
+    if (error instanceof NonExistUserError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+
+      return;
+    }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
   }
 };
 
@@ -188,15 +218,35 @@ export const ArchiveOrderController = async (req: FastifyRequest<{ Body: IArchiv
         order: newOrder,
       });
   } catch (error) {
-    error instanceof Error &&
-      logger.error(error.message);
-
-    error instanceof ZodError &&
+    if (error instanceof ZodError) {
       reply
         .status(ValidationErrorStatus)
         .send({
           message: ValidationErrorMessage,
         });
+
+      return;
+    }
+
+    if (error instanceof NonExistUserError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+
+      return;
+    }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
   }
 };
 
@@ -230,15 +280,35 @@ export const ActiveOrderController = async (req: FastifyRequest<{ Body: IActiveO
         order: newOrder,
       });
   } catch (error) {
-    error instanceof Error &&
-      logger.error(error.message);
-
-    error instanceof ZodError &&
+    if (error instanceof ZodError) {
       reply
         .status(ValidationErrorStatus)
         .send({
           message: ValidationErrorMessage,
         });
+
+      return;
+    }
+
+    if (error instanceof NonExistUserError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+
+      return;
+    }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
   }
 };
 
@@ -270,19 +340,38 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
     reply
       .status(ActiveOrderSuccessStatus)
       .send({
-        message: ActiveOrderSuccessMessage,
         order,
       });
   } catch (error) {
-    error instanceof Error &&
-      logger.error(error.message);
-
-    error instanceof ZodError &&
+    if (error instanceof ZodError) {
       reply
         .status(ValidationErrorStatus)
         .send({
           message: ValidationErrorMessage,
         });
+
+      return;
+    }
+
+    if (error instanceof NonExistUserError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+
+      return;
+    }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
   }
 };
 
@@ -311,7 +400,6 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
         .status(DataSendSuccessStatus)
         .send({
           count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
-          message: DataSendSuccessMessage,
           orders,
         });
       return;
@@ -339,19 +427,37 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
       .status(DataSendSuccessStatus)
       .send({
         count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
-        message: DataSendSuccessMessage,
         orders,
       });
   } catch (error) {
-    error instanceof Error &&
-      logger.error(error.message);
-
-    error instanceof ZodError &&
+    if (error instanceof ZodError) {
       reply
         .status(ValidationErrorStatus)
         .send({
           message: ValidationErrorMessage,
         });
+
+      return;
+    }
+
+    if (error instanceof NonExistUserError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+
+      return;
+    }
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
   }
 };
 
@@ -394,7 +500,6 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
         .status(DataSendSuccessStatus)
         .send({
           count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
-          message: DataSendSuccessMessage,
           orders,
         });
       return;
@@ -426,19 +531,38 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
       .status(DataSendSuccessStatus)
       .send({
         count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
-        message: DataSendSuccessMessage,
         orders,
       });
   } catch (error) {
-    error instanceof Error &&
-      logger.error(error.message);
-
-    error instanceof ZodError &&
+    if (error instanceof ZodError) {
       reply
         .status(ValidationErrorStatus)
         .send({
           message: ValidationErrorMessage,
         });
+
+      return;
+    }
+
+    if (error instanceof NonExistUserError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+
+      return;
+    }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
   }
 };
 
@@ -476,7 +600,6 @@ export const GetUserOrdersController = async (
         .status(DataSendSuccessStatus)
         .send({
           count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
-          message: DataSendSuccessMessage,
           orders,
         });
       return;
@@ -510,18 +633,37 @@ export const GetUserOrdersController = async (
       .status(DataSendSuccessStatus)
       .send({
         count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
-        message: DataSendSuccessMessage,
         orders,
       });
   } catch (error) {
-    error instanceof Error &&
-      logger.error(error.message);
-
-    error instanceof ZodError &&
+    if (error instanceof ZodError) {
       reply
         .status(ValidationErrorStatus)
         .send({
           message: ValidationErrorMessage,
         });
+
+      return;
+    }
+
+    if (error instanceof NonExistUserError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+
+      return;
+    }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
   }
 };
