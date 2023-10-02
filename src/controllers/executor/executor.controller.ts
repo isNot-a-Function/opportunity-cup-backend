@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
 
+import { UpdateExecutorSuccessMessage, UpdateExecutorSuccessStatus } from '../../success/executor';
 import prisma from '../../prisma';
 
 import { NotAuthorizedError } from '../../error/auth';
@@ -8,7 +9,6 @@ import { ValidationErrorStatus, ValidationErrorMessage } from '../../error/base'
 import { verifyAccessToken } from '../../integrations/jwt';
 
 import { logger } from '../../log';
-import { DataSendSuccessStatus } from '../../success/base';
 import { IUpdateExecutorInfo } from './executor.interface';
 import { UpdateExecutorSchema } from './executor.validator';
 
@@ -56,9 +56,10 @@ export const UpdateExecutorInfoController = async (
     });
 
     reply
-      .status(DataSendSuccessStatus)
+      .status(UpdateExecutorSuccessStatus)
       .send({
         executor: updateExecutor,
+        message: UpdateExecutorSuccessMessage,
       });
   } catch (error) {
     if (error instanceof ZodError) {
