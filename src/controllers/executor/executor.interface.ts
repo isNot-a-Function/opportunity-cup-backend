@@ -9,3 +9,8 @@ export interface IUpdateExecutorInfo {
   costType?: CostTypeEnum;
   cost?: number;
 }
+
+export interface IResponseOrder {
+  orderId: string;
+  comment: string;
+}

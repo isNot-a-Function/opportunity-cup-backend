@@ -36,3 +36,12 @@ export const UpdateExecutorSchema = z.object({
     .array()
     .optional(),
 }).strict();
+
+export const ResponseOrderSchema = z.object({
+  comment: z
+    .string()
+    .nonempty(),
+  orderId: z
+    .string()
+    .nonempty(),
+}).strict();
