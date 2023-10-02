@@ -353,7 +353,7 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
           custoremInfo: true,
         },
         where: {
-          id: user.userId,
+          id: order.customer.userId,
         },
       });
 
@@ -376,7 +376,7 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
           custoremInfo: true,
         },
         where: {
-          id: user.userId,
+          id: order.customer.userId,
         },
       });
 
