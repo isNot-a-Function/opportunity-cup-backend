@@ -5,6 +5,6 @@ export class NotAuthorizedError extends Error {
     super();
 
     this.message = 'Ошибка аутентификации';
-    this.status = 400;
+    this.status = 401;
   }
 }
