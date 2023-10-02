@@ -13,7 +13,11 @@ export const createToken = (user: User): string => {
 };
 
 export const verifyAccessToken = (accessToken: string) => {
-  return verify(accessToken, JWT_ACCESS_SECRET);
+  try {
+    return verify(accessToken, JWT_ACCESS_SECRET);
+  } catch (error) {
+    return 'Invalid signature';
+  }
 };
 
 export const createRefreshToken = (user: User): string => {
@@ -26,5 +30,9 @@ export const createRefreshToken = (user: User): string => {
 };
 
 export const verifyRefreshToken = (refreshToken: string) => {
-  return verify(refreshToken, JWT_REFRESH_SECRET);
+  try {
+    return verify(refreshToken, JWT_REFRESH_SECRET);
+  } catch (error) {
+    return 'Invalid signature';
+  }
 };

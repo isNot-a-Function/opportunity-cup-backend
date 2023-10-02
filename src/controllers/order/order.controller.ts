@@ -1,6 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
-import { JwtPayload } from 'jsonwebtoken';
 
 import prisma from '../../prisma';
 import { logger } from '../../log';
@@ -39,48 +38,45 @@ import {
 
 export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateOrder }>, reply: FastifyReply) => {
   try {
-    // if (!req.headers.authorization) {
-    //   throw new NotAuthorizedError();
-    // }
+    if (!req.headers.authorization) {
+      throw new NotAuthorizedError();
+    }
 
     const user = verifyAccessToken(req.headers.authorization);
 
-    logger.info(user);
-    logger.info(typeof user);
+    if (typeof user === 'string') {
+      throw new NotAuthorizedError();
+    }
 
-    // if (!user || typeof user === 'string') {
-    //   throw new NotAuthorizedError();
-    // }
+    const data = CreateOrderSchema.parse(req.body);
 
-    // const data = CreateOrderSchema.parse(req.body);
+    const newOrder = await prisma.order.create({
+      data: {
+        cost: data.cost,
+        costType: data.costType,
+        customer: {
+          connect: {
+            userId: user.userId,
+          },
+        },
+        description: data.description,
+        files: data.files,
+        specialization: {
+          connect: {
+            title: data.specialization,
+          },
+        },
+        tags: data.tags,
+        title: data.title,
+      },
+    });
 
-    // const newOrder = await prisma.order.create({
-    //   data: {
-    //     cost: data.cost,
-    //     costType: data.costType,
-    //     customer: {
-    //       connect: {
-    //         userId: user.userId,
-    //       },
-    //     },
-    //     description: data.description,
-    //     files: data.files,
-    //     specialization: {
-    //       connect: {
-    //         title: data.specialization,
-    //       },
-    //     },
-    //     tags: data.tags,
-    //     title: data.title,
-    //   },
-    // });
-
-    // reply
-    //   .status(CreateOrderSuccessStatus)
-    //   .send({
-    //     message: CreateOrderSuccessMessage,
-    //     order: newOrder,
-    //   });
+    reply
+      .status(CreateOrderSuccessStatus)
+      .send({
+        message: CreateOrderSuccessMessage,
+        order: newOrder,
+      });
   } catch (error) {
     if (error instanceof ZodError) {
       reply
