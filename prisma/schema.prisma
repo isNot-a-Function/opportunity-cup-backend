@@ -30,7 +30,7 @@ model ExecutorInfo {
   rating          Float?           @default(0)
   description     String?
   classification  String?
-  tags            String?
+  tags            String[]
   specializations Specialization[]
   expirience      ExpirienceEnum   @default(lessYear)
   costType        CostTypeEnum     @default(none)

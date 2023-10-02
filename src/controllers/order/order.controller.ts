@@ -93,6 +93,16 @@ export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateO
           message: error.message,
         });
     }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
   }
 };
 
@@ -310,10 +320,21 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
       },
     });
 
+    const user = await prisma.user.findUnique({
+      include: {
+        contact: true,
+        custoremInfo: true,
+      },
+      where: {
+        id: order.customer.userId,
+      },
+    });
+
     reply
       .status(ActiveOrderSuccessStatus)
       .send({
         order,
+        user,
       });
   } catch (error) {
     if (error instanceof ZodError) {
