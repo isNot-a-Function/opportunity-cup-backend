@@ -264,6 +264,22 @@ export const RefreshTokenController = async (req: FastifyRequest, reply: Fastify
         });
     }
   } catch (error) {
+    if (error instanceof InvalidRefreshTokenError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
+    if (error instanceof NonExistUserError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
     if (error instanceof Error) {
       logger.error(error.message);
 
