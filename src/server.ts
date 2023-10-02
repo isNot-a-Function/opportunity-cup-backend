@@ -10,6 +10,7 @@ import { authRouter } from './routes/auth.routes';
 import { userRouter } from './routes/user.routes';
 import { checkRouter } from './routes/check.routes';
 import { orderRouter } from './routes/order.routes';
+import { executorRouter } from './routes/executor.routes';
 import { specializationRouter } from './routes/specialization.routes';
 
 const server = fastify();
@@ -68,6 +69,10 @@ export const startServer = async () => {
 
     await server.register(orderRouter, {
       prefix: '/api/order',
+    });
+
+    await server.register(executorRouter, {
+      prefix: '/api/executor',
     });
 
     await server.ready().then(() => {

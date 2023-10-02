@@ -36,11 +36,3 @@ export const UpdateExecutorSchema = z.object({
     .array()
     .optional(),
 }).strict();
-
-export const GetExecutorSchema = z.object({
-  userId: z
-    .string({
-      required_error: 'Id польззователя обязательно',
-    })
-    .nonempty(),
-}).strict();

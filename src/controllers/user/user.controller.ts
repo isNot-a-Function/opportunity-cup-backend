@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
 
+import { DataSendSuccessStatus } from 'success/base';
 import prisma from '../../prisma';
 import { refreshTokenConfiguration } from '../../configuration';
 import { ChangeRoleSuccessMessage, ChangeRoleSuccessStatus } from '../../success/user';
@@ -10,6 +11,8 @@ import { logger } from '../../log';
 import { NotAuthorizedError } from '../../error/auth';
 import { ValidationErrorStatus, ValidationErrorMessage } from '../../error/base';
 import { createRefreshToken, createToken, verifyAccessToken } from '../../integrations/jwt';
+import { GetUserSchema } from './user.validator';
+import { IGetUser } from './user.interface';
 
 export const ChangeRoleController = async (req: FastifyRequest, reply: FastifyReply) => {
   try {
@@ -72,6 +75,58 @@ export const ChangeRoleController = async (req: FastifyRequest, reply: FastifyRe
         .status(ValidationErrorStatus)
         .send({
           message: ValidationErrorMessage,
+        });
+    }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
+  }
+};
+
+export const GetUserController = async (
+  req: FastifyRequest<{ Params: IGetUser }>,
+  reply: FastifyReply,
+) => {
+  try {
+    const data = GetUserSchema.parse(req.body);
+
+    const findUser = await prisma.user.findUnique({
+      include: {
+        contact: true,
+        custoremInfo: true,
+        executorInfo: true,
+      },
+      where: {
+        id: data.userId,
+      },
+    });
+
+    reply
+      .status(DataSendSuccessStatus)
+      .send({
+        user: findUser,
+      });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      reply
+        .status(ValidationErrorStatus)
+        .send({
+          message: ValidationErrorMessage,
+        });
+    }
+
+    if (error instanceof NotAuthorizedError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
         });
     }
 

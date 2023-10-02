@@ -9,7 +9,3 @@ export interface IUpdateExecutorInfo {
   costType?: CostTypeEnum;
   cost?: number;
 }
-
-export interface IGetExecutorInfo {
-  userId: string
-}

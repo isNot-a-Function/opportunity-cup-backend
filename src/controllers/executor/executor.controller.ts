@@ -1,16 +1,18 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-
 import { ZodError } from 'zod';
-import { ValidationErrorStatus, ValidationErrorMessage } from 'error/base';
-import { verifyAccessToken } from 'integrations/jwt';
-import { NotAuthorizedError } from '../../error/auth';
+
 import prisma from '../../prisma';
 
+import { NotAuthorizedError } from '../../error/auth';
+import { ValidationErrorStatus, ValidationErrorMessage } from '../../error/base';
+import { verifyAccessToken } from '../../integrations/jwt';
+
 import { logger } from '../../log';
+import { DataSendSuccessStatus } from '../../success/base';
 import { IUpdateExecutorInfo } from './executor.interface';
 import { UpdateExecutorSchema } from './executor.validator';
 
-export const UpdateExecutorController = async (
+export const UpdateExecutorInfoController = async (
   req: FastifyRequest<{ Body: IUpdateExecutorInfo }>,
   reply: FastifyReply,
 ) => {
@@ -54,6 +56,7 @@ export const UpdateExecutorController = async (
     });
 
     reply
+      .status(DataSendSuccessStatus)
       .send({
         executor: updateExecutor,
       });
