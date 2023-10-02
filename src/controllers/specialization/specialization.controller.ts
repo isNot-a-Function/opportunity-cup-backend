@@ -3,7 +3,7 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import prisma from '../../prisma';
 
 import { logger } from '../../log';
-import { DataSendSuccessMessage, DataSendSuccessStatus } from '../../success/base';
+import { DataSendSuccessStatus } from '../../success/base';
 
 export const GetSpecializationsController = async (req: FastifyRequest, reply: FastifyReply) => {
   try {
@@ -12,11 +12,17 @@ export const GetSpecializationsController = async (req: FastifyRequest, reply: F
     reply
       .status(DataSendSuccessStatus)
       .send({
-        message: DataSendSuccessMessage,
         specializations,
       });
   } catch (error) {
-    error instanceof Error &&
+    if (error instanceof Error) {
       logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
   }
 };

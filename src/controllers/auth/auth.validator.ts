@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-
 import { z } from 'zod';
 
 export const SignUpSchema = z.object({

@@ -28,6 +28,7 @@
     "no-useless-constructor": "off",
     "no-empty-function": "off",
     "no-unused-vars": "warn",
+    "no-magic-numbers": "off",
     "max-len": [
       "error",
       {

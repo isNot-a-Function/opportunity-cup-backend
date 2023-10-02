@@ -59,21 +59,30 @@ export const ChangeRoleController = async (req: FastifyRequest, reply: FastifyRe
         },
       });
   } catch (error) {
-    error instanceof Error &&
-      logger.error(error.message);
-
-    error instanceof NotAuthorizedError &&
+    if (error instanceof NotAuthorizedError) {
       reply
         .status(error.status)
         .send({
-          message: error.name,
+          message: error.message,
         });
+    }
 
-    error instanceof ZodError &&
+    if (error instanceof ZodError) {
       reply
         .status(ValidationErrorStatus)
         .send({
           message: ValidationErrorMessage,
         });
+    }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
   }
 };

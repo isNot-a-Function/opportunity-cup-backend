@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
 
@@ -44,8 +43,6 @@ export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateO
     }
 
     const user = verifyAccessToken(req.headers.authorization);
-
-    logger.error(user);
 
     if (typeof user === 'string') {
       throw new NotAuthorizedError();
@@ -150,8 +147,6 @@ export const UpdateOrderController = async (req: FastifyRequest<{ Body: IUpdateO
         .send({
           message: ValidationErrorMessage,
         });
-
-      return;
     }
 
     if (error instanceof NotAuthorizedError) {
@@ -160,8 +155,6 @@ export const UpdateOrderController = async (req: FastifyRequest<{ Body: IUpdateO
         .send({
           message: error.message,
         });
-
-      return;
     }
 
     if (error instanceof Error) {
@@ -212,8 +205,6 @@ export const ArchiveOrderController = async (req: FastifyRequest<{ Body: IArchiv
         .send({
           message: ValidationErrorMessage,
         });
-
-      return;
     }
 
     if (error instanceof NotAuthorizedError) {
@@ -222,8 +213,6 @@ export const ArchiveOrderController = async (req: FastifyRequest<{ Body: IArchiv
         .send({
           message: error.message,
         });
-
-      return;
     }
 
     if (error instanceof Error) {
@@ -274,8 +263,6 @@ export const ActiveOrderController = async (req: FastifyRequest<{ Body: IActiveO
         .send({
           message: ValidationErrorMessage,
         });
-
-      return;
     }
 
     if (error instanceof NotAuthorizedError) {
@@ -284,8 +271,6 @@ export const ActiveOrderController = async (req: FastifyRequest<{ Body: IActiveO
         .send({
           message: error.message,
         });
-
-      return;
     }
 
     if (error instanceof Error) {
@@ -337,8 +322,6 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
         .send({
           message: ValidationErrorMessage,
         });
-
-      return;
     }
 
     if (error instanceof NotAuthorizedError) {
@@ -347,8 +330,6 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
         .send({
           message: error.message,
         });
-
-      return;
     }
 
     if (error instanceof Error) {
@@ -390,6 +371,7 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
           count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
           orders,
         });
+
       return;
     }
 
@@ -424,8 +406,6 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
         .send({
           message: ValidationErrorMessage,
         });
-
-      return;
     }
 
     if (error instanceof NotAuthorizedError) {
@@ -434,8 +414,6 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
         .send({
           message: error.message,
         });
-
-      return;
     }
     if (error instanceof Error) {
       logger.error(error.message);
@@ -490,6 +468,7 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
           count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
           orders,
         });
+
       return;
     }
 
@@ -528,8 +507,6 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
         .send({
           message: ValidationErrorMessage,
         });
-
-      return;
     }
 
     if (error instanceof NotAuthorizedError) {
@@ -538,8 +515,6 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
         .send({
           message: error.message,
         });
-
-      return;
     }
 
     if (error instanceof Error) {
@@ -630,8 +605,6 @@ export const GetUserOrdersController = async (
         .send({
           message: ValidationErrorMessage,
         });
-
-      return;
     }
 
     if (error instanceof NotAuthorizedError) {
@@ -640,8 +613,6 @@ export const GetUserOrdersController = async (
         .send({
           message: error.message,
         });
-
-      return;
     }
 
     if (error instanceof Error) {

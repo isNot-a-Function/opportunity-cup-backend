@@ -22,11 +22,14 @@ export const HealthCheckController = async (req: FastifyRequest, reply: FastifyR
         message: HealthCheckSuccessMessage,
       });
   } catch (error) {
-    error instanceof Error &&
+    if (error instanceof Error) {
+      logger.error(error.message);
+
       reply
         .status(HealthCheckErrorStatus)
         .send({
           message: HealthCheckErrorMessage,
         });
+    }
   }
 };

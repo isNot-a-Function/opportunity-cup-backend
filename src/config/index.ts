@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 export const SERVER_TYPE = process.env.SERVER_TYPE;
 export const HASH_COIN = Number(process.env.HASH_COIN) || 7;
 export const SERVICE_NAME = process.env.SERVICE_NAME || 'opportunity-cup-backend';

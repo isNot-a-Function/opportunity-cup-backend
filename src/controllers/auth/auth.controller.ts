@@ -99,29 +99,39 @@ export const SignUpUserController = async (req: FastifyRequest<{ Body: ISignUpUs
         },
       });
   } catch (error) {
-    error instanceof Error &&
-      logger.error(error.message);
-
-    error instanceof ZodError &&
+    if (error instanceof ZodError) {
       reply
         .status(ValidationErrorStatus)
         .send({
           message: ValidationErrorMessage,
         });
+    }
 
-    error instanceof ExistUserError &&
+    if (error instanceof ExistUserError) {
       reply
         .status(error.status)
         .send({
           message: error.message,
         });
+    }
 
-    error instanceof ExistEmailError &&
+    if (error instanceof ExistEmailError) {
       reply
         .status(error.status)
         .send({
           message: error.message,
         });
+    }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
   }
 };
 
@@ -172,36 +182,47 @@ export const SignInUserController = async (req: FastifyRequest<{ Body: ISignInUs
         },
       });
   } catch (error) {
-    error instanceof Error &&
-      logger.error(error.message);
-
-    error instanceof ZodError &&
+    if (error instanceof ZodError) {
       reply
         .status(ValidationErrorStatus)
         .send({
           message: ValidationErrorMessage,
         });
+    }
 
-    error instanceof InvalidLoginError &&
+    if (error instanceof InvalidLoginError) {
       reply
         .status(error.status)
         .send({
           message: error.message,
         });
+    }
 
-    error instanceof NonExistUserError &&
+    if (error instanceof NonExistUserError) {
       reply
         .status(error.status)
         .send({
           message: error.message,
         });
+    }
 
-    error instanceof PasswordMatchError &&
+    if (error instanceof PasswordMatchError) {
       reply
         .status(error.status)
         .send({
           message: error.message,
         });
+    }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
   }
 };
 
@@ -243,7 +264,14 @@ export const RefreshTokenController = async (req: FastifyRequest, reply: Fastify
         });
     }
   } catch (error) {
-    error instanceof Error &&
+    if (error instanceof Error) {
       logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
   }
 };
