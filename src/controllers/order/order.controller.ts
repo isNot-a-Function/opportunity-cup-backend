@@ -45,8 +45,8 @@ export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateO
 
     const user = verifyAccessToken(req.headers.authorization);
 
-    logger.error(user);
-    logger.error(typeof user);
+    logger.info(user);
+    logger.info(typeof user);
 
     if (!user || typeof user === 'string') {
       throw new NotAuthorizedError();
