@@ -1,6 +1,7 @@
 import fastify from 'fastify';
 import cors from '@fastify/cors';
 import cookie from '@fastify/cookie';
+import fastifyMultipart from '@fastify/multipart';
 
 import { COOKIE_SECRET, SERVER_HOST, SERVER_PORT } from './config';
 import { logger } from './log';
@@ -48,6 +49,13 @@ export const startServer = async () => {
           logger.warn('Invalid request origin...');
           callback(null, false);
         }
+      },
+    });
+
+    await server.register(fastifyMultipart, {
+      limits: {
+        fileSize: 1 * 1024 * 1024 * 32,
+        files: 3,
       },
     });
 

@@ -37,7 +37,7 @@
   "dependencies": {
     "@fastify/cookie": "^9.0.4",
     "@fastify/cors": "^8.3.0",
-    "@fastify/multipart": "^7.7.3",
+    "@fastify/multipart": "^8.0.0",
     "@prisma/client": "^5.2.0",
     "bcrypt": "^5.1.1",
     "deep-email-validator": "^0.1.21",

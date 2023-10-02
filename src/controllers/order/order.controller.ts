@@ -299,8 +299,6 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
   try {
     const data = GetOrderSchema.parse(req.params);
 
-    const user = verifyAccessToken(req.headers.authorization);
-
     const order = await prisma.order.findUnique({
       include: {
         customer: true,
@@ -322,7 +320,7 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
       },
     });
 
-    if (typeof user === 'string') {
+    if (!req.headers.authorization) {
       const findUser = await prisma.user.findUnique({
         include: {
           contact: true,
@@ -340,6 +338,12 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
         });
 
       return;
+    }
+
+    const user = verifyAccessToken(req.headers.authorization);
+
+    if (typeof user === 'string') {
+      throw new NotAuthorizedError();
     }
 
     if (order.customer.userId === user.userId) {
