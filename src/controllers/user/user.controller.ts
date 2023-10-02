@@ -1,9 +1,9 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
 
-import { DataSendSuccessStatus } from 'success/base';
 import prisma from '../../prisma';
 import { refreshTokenConfiguration } from '../../configuration';
+import { DataSendSuccessStatus } from '../../success/base';
 import { ChangeRoleSuccessMessage, ChangeRoleSuccessStatus } from '../../success/user';
 
 import { logger } from '../../log';
