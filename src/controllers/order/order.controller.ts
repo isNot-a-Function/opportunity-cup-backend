@@ -17,7 +17,7 @@ import {
   UpdateOrderSuccessMessage,
   UpdateOrderSuccessStatus,
 } from '../../success/order';
-import { NonExistUserError, NotAuthorizedError } from '../../error/auth';
+import { NotAuthorizedError } from '../../error/auth';
 import { verifyAccessToken } from '../../integrations/jwt';
 import {
   ActiveOrderSchema,
@@ -89,7 +89,7 @@ export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateO
       return;
     }
 
-    if (error instanceof NonExistUserError) {
+    if (error instanceof NotAuthorizedError) {
       reply
         .status(error.status)
         .send({
@@ -166,7 +166,7 @@ export const UpdateOrderController = async (req: FastifyRequest<{ Body: IUpdateO
       return;
     }
 
-    if (error instanceof NonExistUserError) {
+    if (error instanceof NotAuthorizedError) {
       reply
         .status(error.status)
         .send({
@@ -228,7 +228,7 @@ export const ArchiveOrderController = async (req: FastifyRequest<{ Body: IArchiv
       return;
     }
 
-    if (error instanceof NonExistUserError) {
+    if (error instanceof NotAuthorizedError) {
       reply
         .status(error.status)
         .send({
@@ -290,7 +290,7 @@ export const ActiveOrderController = async (req: FastifyRequest<{ Body: IActiveO
       return;
     }
 
-    if (error instanceof NonExistUserError) {
+    if (error instanceof NotAuthorizedError) {
       reply
         .status(error.status)
         .send({
@@ -353,7 +353,7 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
       return;
     }
 
-    if (error instanceof NonExistUserError) {
+    if (error instanceof NotAuthorizedError) {
       reply
         .status(error.status)
         .send({
@@ -440,7 +440,7 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
       return;
     }
 
-    if (error instanceof NonExistUserError) {
+    if (error instanceof NotAuthorizedError) {
       reply
         .status(error.status)
         .send({
@@ -544,7 +544,7 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
       return;
     }
 
-    if (error instanceof NonExistUserError) {
+    if (error instanceof NotAuthorizedError) {
       reply
         .status(error.status)
         .send({
@@ -646,7 +646,7 @@ export const GetUserOrdersController = async (
       return;
     }
 
-    if (error instanceof NonExistUserError) {
+    if (error instanceof NotAuthorizedError) {
       reply
         .status(error.status)
         .send({
