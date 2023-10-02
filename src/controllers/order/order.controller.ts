@@ -79,15 +79,25 @@ export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateO
         order: newOrder,
       });
   } catch (error) {
-    error instanceof Error &&
-      logger.error(error.message);
-
-    error instanceof ZodError &&
+    if (error instanceof ZodError) {
       reply
         .status(ValidationErrorStatus)
         .send({
           message: ValidationErrorMessage,
         });
+
+      return;
+    }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
   }
 };
 
