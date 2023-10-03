@@ -4,7 +4,7 @@ import { ZodError } from 'zod';
 import { UpdateExecutorSuccessMessage, UpdateExecutorSuccessStatus } from '../../success/executor';
 import prisma from '../../prisma';
 
-import { NotAuthorizedError } from '../../error/auth';
+import { NotAuthorizedError, NotTokenError } from '../../error/auth';
 import { ValidationErrorStatus, ValidationErrorMessage } from '../../error/base';
 import { verifyAccessToken } from '../../integrations/jwt';
 
@@ -18,7 +18,7 @@ export const UpdateExecutorInfoController = async (
 ) => {
   try {
     if (!req.headers.authorization) {
-      throw new NotAuthorizedError();
+      throw new NotTokenError();
     }
 
     const user = verifyAccessToken(req.headers.authorization);
@@ -96,7 +96,7 @@ export const ResponseOrderController = async (
 ) => {
   try {
     if (!req.headers.authorization) {
-      throw new NotAuthorizedError();
+      throw new NotTokenError();
     }
 
     const user = verifyAccessToken(req.headers.authorization);

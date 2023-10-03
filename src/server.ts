@@ -7,6 +7,7 @@ import { COOKIE_SECRET, SERVER_HOST, SERVER_PORT } from './config';
 import { logger } from './log';
 import { whitelistCORS } from './configuration';
 
+import { fileRouter } from './routes/file.routes';
 import { authRouter } from './routes/auth.routes';
 import { userRouter } from './routes/user.routes';
 import { checkRouter } from './routes/check.routes';
@@ -81,6 +82,10 @@ export const startServer = async () => {
 
     await server.register(executorRouter, {
       prefix: '/api/executor',
+    });
+
+    await server.register(fileRouter, {
+      prefix: '/api/file',
     });
 
     await server.ready().then(() => {

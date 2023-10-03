@@ -1,11 +1,9 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
-import cuid from 'cuid';
 
 import prisma from '../../prisma';
 import { logger } from '../../log';
 
-import * as awsS3API from '../../integrations/aws/s3';
 import { ValidationErrorStatus, ValidationErrorMessage } from '../../error/base';
 import { DataSendSuccessStatus } from '../../success/base';
 import {
@@ -18,7 +16,7 @@ import {
   UpdateOrderSuccessMessage,
   UpdateOrderSuccessStatus,
 } from '../../success/order';
-import { NotAuthorizedError } from '../../error/auth';
+import { NotAuthorizedError, NotTokenError } from '../../error/auth';
 import { verifyAccessToken } from '../../integrations/jwt';
 import {
   ActiveOrderSchema,
@@ -41,27 +39,13 @@ import {
 export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateOrder }>, reply: FastifyReply) => {
   try {
     if (!req.headers.authorization) {
-      throw new NotAuthorizedError();
+      throw new NotTokenError();
     }
 
     const user = verifyAccessToken(req.headers.authorization);
 
     if (typeof user === 'string') {
       throw new NotAuthorizedError();
-    }
-
-    const parts = req.files();
-
-    const files: string[] = [];
-
-    for await (const part of parts) {
-      const file = await part.toBuffer();
-
-      const filename = `${cuid()}_${part.filename}`;
-
-      const fileUrl = await awsS3API.uploadFile(file, filename);
-
-      files.push(fileUrl);
     }
 
     const data = CreateOrderSchema.parse(req.body);
@@ -76,7 +60,7 @@ export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateO
           },
         },
         description: data.description,
-        files,
+        files: data.files,
         specialization: {
           connect: {
             title: data.specialization,
@@ -125,7 +109,7 @@ export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateO
 export const UpdateOrderController = async (req: FastifyRequest<{ Body: IUpdateOrder }>, reply: FastifyReply) => {
   try {
     if (!req.headers.authorization) {
-      throw new NotAuthorizedError();
+      throw new NotTokenError();
     }
 
     const user = verifyAccessToken(req.headers.authorization);
@@ -198,7 +182,7 @@ export const UpdateOrderController = async (req: FastifyRequest<{ Body: IUpdateO
 export const ArchiveOrderController = async (req: FastifyRequest<{ Body: IArchiveOrder }>, reply: FastifyReply) => {
   try {
     if (!req.headers.authorization) {
-      throw new NotAuthorizedError();
+      throw new NotTokenError();
     }
 
     const user = verifyAccessToken(req.headers.authorization);
@@ -256,7 +240,7 @@ export const ArchiveOrderController = async (req: FastifyRequest<{ Body: IArchiv
 export const ActiveOrderController = async (req: FastifyRequest<{ Body: IActiveOrder }>, reply: FastifyReply) => {
   try {
     if (!req.headers.authorization) {
-      throw new NotAuthorizedError();
+      throw new NotTokenError();
     }
 
     const user = verifyAccessToken(req.headers.authorization);
@@ -532,7 +516,7 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
 export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: IGetOrders }>, reply: FastifyReply) => {
   try {
     if (!req.headers.authorization) {
-      throw new NotAuthorizedError();
+      throw new NotTokenError();
     }
 
     const user = verifyAccessToken(req.headers.authorization);

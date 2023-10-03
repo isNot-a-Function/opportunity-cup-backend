@@ -5,3 +5,4 @@ export * from './nonExistUserError';
 export * from './passwordMatchError';
 export * from './invalidRefreshTokenError';
 export * from './notAuthorizedError';
+export * from './notTokenError';

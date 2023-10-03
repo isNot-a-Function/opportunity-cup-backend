@@ -8,7 +8,7 @@ import { ChangeRoleSuccessMessage, ChangeRoleSuccessStatus } from '../../success
 
 import { logger } from '../../log';
 
-import { NotAuthorizedError } from '../../error/auth';
+import { NotAuthorizedError, NotTokenError } from '../../error/auth';
 import { ValidationErrorStatus, ValidationErrorMessage } from '../../error/base';
 import { createRefreshToken, createToken, verifyAccessToken } from '../../integrations/jwt';
 import { GetUserSchema } from './user.validator';
@@ -17,7 +17,7 @@ import { IGetUser } from './user.interface';
 export const ChangeRoleController = async (req: FastifyRequest, reply: FastifyReply) => {
   try {
     if (!req.headers.authorization) {
-      throw new NotAuthorizedError();
+      throw new NotTokenError();
     }
 
     const user = verifyAccessToken(req.headers.authorization);
