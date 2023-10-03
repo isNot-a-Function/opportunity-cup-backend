@@ -20,6 +20,7 @@ model User {
   city         String?
   logo         String?
   contact      Contact?
+  balance      Float?
 }
 
 model ExecutorInfo {

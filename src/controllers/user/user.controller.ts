@@ -78,6 +78,14 @@ export const ChangeRoleController = async (req: FastifyRequest, reply: FastifyRe
         });
     }
 
+    if (error instanceof NotTokenError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
     if (error instanceof Error) {
       logger.error(error.message);
 

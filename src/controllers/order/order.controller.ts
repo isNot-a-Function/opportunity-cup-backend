@@ -94,6 +94,14 @@ export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateO
         });
     }
 
+    if (error instanceof NotTokenError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
     if (error instanceof Error) {
       logger.error(error.message);
 
@@ -167,6 +175,14 @@ export const UpdateOrderController = async (req: FastifyRequest<{ Body: IUpdateO
         });
     }
 
+    if (error instanceof NotTokenError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
     if (error instanceof Error) {
       logger.error(error.message);
 
@@ -225,6 +241,14 @@ export const ArchiveOrderController = async (req: FastifyRequest<{ Body: IArchiv
         });
     }
 
+    if (error instanceof NotTokenError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
     if (error instanceof Error) {
       logger.error(error.message);
 
@@ -276,6 +300,14 @@ export const ActiveOrderController = async (req: FastifyRequest<{ Body: IActiveO
     }
 
     if (error instanceof NotAuthorizedError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
+    if (error instanceof NotTokenError) {
       reply
         .status(error.status)
         .send({
@@ -408,6 +440,14 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
         });
     }
 
+    if (error instanceof NotTokenError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
     if (error instanceof Error) {
       logger.error(error.message);
 
@@ -501,6 +541,15 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
           message: error.message,
         });
     }
+
+    if (error instanceof NotTokenError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
     if (error instanceof Error) {
       logger.error(error.message);
 
@@ -613,6 +662,14 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
         });
     }
 
+    if (error instanceof NotTokenError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
     if (error instanceof Error) {
       logger.error(error.message);
 
@@ -714,6 +771,14 @@ export const GetUserOrdersController = async (
     }
 
     if (error instanceof NotAuthorizedError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
+    if (error instanceof NotTokenError) {
       reply
         .status(error.status)
         .send({

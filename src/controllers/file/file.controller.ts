@@ -11,12 +11,16 @@ export const UploadFileController = async (req: FastifyRequest, reply: FastifyRe
     // eslint-disable-next-line prefer-const
     let files: string[] = [];
 
+    logger.info(parts);
+
     for await (const part of parts) {
       const file = await part.toBuffer();
 
       const filename = `${cuid()}`;
 
       const fileUrl = await awsS3API.uploadFile(file, filename);
+
+      logger.info('File sended');
 
       files.push(fileUrl);
     }

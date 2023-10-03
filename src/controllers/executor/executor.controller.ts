@@ -78,6 +78,14 @@ export const UpdateExecutorInfoController = async (
         });
     }
 
+    if (error instanceof NotTokenError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
     if (error instanceof Error) {
       logger.error(error.message);
 
@@ -158,6 +166,14 @@ export const ResponseOrderController = async (
     }
 
     if (error instanceof NotAuthorizedError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
+    if (error instanceof NotTokenError) {
       reply
         .status(error.status)
         .send({
