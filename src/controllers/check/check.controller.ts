@@ -44,7 +44,6 @@ export const FilesUploadCheckController = async (req: FastifyRequest, reply: Fas
     const parts = req.files();
 
     for await (const part of parts) {
-      console.log(part.filename);
       await pump(part.file, fs.createWriteStream(part.filename));
     }
 

@@ -11,8 +11,8 @@ import { logger } from '../../log';
 import { NotAuthorizedError, NotTokenError } from '../../error/auth';
 import { ValidationErrorStatus, ValidationErrorMessage } from '../../error/base';
 import { createRefreshToken, createToken, verifyAccessToken } from '../../integrations/jwt';
-import { GetUserSchema } from './user.validator';
-import { IGetUser } from './user.interface';
+import { AddLogoSchema, GetUserSchema } from './user.validator';
+import { IAddLogo, IGetUser } from './user.interface';
 
 export const ChangeRoleController = async (req: FastifyRequest, reply: FastifyReply) => {
   try {
@@ -60,6 +60,72 @@ export const ChangeRoleController = async (req: FastifyRequest, reply: FastifyRe
           id: updatedUser.id,
           role: updatedUser.role,
         },
+      });
+  } catch (error) {
+    if (error instanceof NotAuthorizedError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
+    if (error instanceof ZodError) {
+      reply
+        .status(ValidationErrorStatus)
+        .send({
+          message: ValidationErrorMessage,
+        });
+    }
+
+    if (error instanceof NotTokenError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
+  }
+};
+
+export const AddLogoController = async (req: FastifyRequest<{ Body: IAddLogo }>, reply: FastifyReply) => {
+  try {
+    if (!req.headers.authorization) {
+      throw new NotTokenError();
+    }
+
+    const user = verifyAccessToken(req.headers.authorization);
+
+    if (typeof user === 'string') {
+      throw new NotAuthorizedError();
+    }
+
+    const data = AddLogoSchema.parse(req.body);
+
+    const updatedUser = await prisma.user.update({
+      data: {
+        logo: data.logo,
+      },
+      where: {
+        id: user.userId,
+      },
+    });
+
+    reply
+      .status(200)
+      .send({
+        message: 'Логотип обновлен',
+        updatedUser,
       });
   } catch (error) {
     if (error instanceof NotAuthorizedError) {
