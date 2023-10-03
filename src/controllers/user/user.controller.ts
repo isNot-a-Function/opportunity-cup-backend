@@ -176,7 +176,7 @@ export const GetUserController = async (
         executorInfo: true,
       },
       where: {
-        id: data.userId,
+        id: req.params.userId,
       },
     });
 
