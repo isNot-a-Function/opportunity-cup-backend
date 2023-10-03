@@ -7,3 +7,11 @@ export const GetUserSchema = z.object({
     })
     .nonempty(),
 }).strict();
+
+export const AddLogoSchema = z.object({
+  logo: z
+    .string({
+      required_error: 'Id польззователя обязательно',
+    })
+    .nonempty(),
+}).strict();
