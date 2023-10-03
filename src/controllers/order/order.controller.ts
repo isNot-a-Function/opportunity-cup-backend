@@ -1,9 +1,11 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
+import cuid from 'cuid';
 
 import prisma from '../../prisma';
 import { logger } from '../../log';
 
+import * as awsS3API from '../../integrations/aws/s3';
 import { ValidationErrorStatus, ValidationErrorMessage } from '../../error/base';
 import { DataSendSuccessStatus } from '../../success/base';
 import {
@@ -48,6 +50,20 @@ export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateO
       throw new NotAuthorizedError();
     }
 
+    const parts = req.files();
+
+    const files: string[] = [];
+
+    for await (const part of parts) {
+      const file = await part.toBuffer();
+
+      const filename = `${cuid()}_${part.filename}`;
+
+      const fileUrl = await awsS3API.uploadFile(file, filename);
+
+      files.push(fileUrl);
+    }
+
     const data = CreateOrderSchema.parse(req.body);
 
     const newOrder = await prisma.order.create({
@@ -60,7 +76,7 @@ export const CreateOrderController = async (req: FastifyRequest<{ Body: ICreateO
           },
         },
         description: data.description,
-        files: data.files,
+        files,
         specialization: {
           connect: {
             title: data.specialization,
