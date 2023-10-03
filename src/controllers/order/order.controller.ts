@@ -318,6 +318,11 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
     const order = await prisma.order.findUnique({
       include: {
         customer: true,
+        responses: {
+          include: {
+            executor: true,
+          },
+        },
         specialization: true,
       },
       where: {
@@ -439,6 +444,11 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
       const orders = await prisma.order.findMany({
         include: {
           customer: true,
+          responses: {
+            include: {
+              executor: true,
+            },
+          },
           specialization: true,
         },
         where: {
@@ -465,6 +475,11 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
     const orders = await prisma.order.findMany({
       include: {
         customer: true,
+        responses: {
+          include: {
+            executor: true,
+          },
+        },
         specialization: true,
       },
       skip: 15 * (Number(data.page) - 1),
@@ -532,6 +547,11 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
       const orders = await prisma.order.findMany({
         include: {
           customer: true,
+          responses: {
+            include: {
+              executor: true,
+            },
+          },
           specialization: true,
         },
         where: {
@@ -562,6 +582,11 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
     const orders = await prisma.order.findMany({
       include: {
         customer: true,
+        responses: {
+          include: {
+            executor: true,
+          },
+        },
         specialization: true,
       },
       skip: 15 * (Number(data.page) - 1),
@@ -627,6 +652,11 @@ export const GetUserOrdersController = async (
       const orders = await prisma.order.findMany({
         include: {
           customer: true,
+          responses: {
+            include: {
+              executor: true,
+            },
+          },
           specialization: true,
         },
         where: {
@@ -658,6 +688,11 @@ export const GetUserOrdersController = async (
     const orders = await prisma.order.findMany({
       include: {
         customer: true,
+        responses: {
+          include: {
+            executor: true,
+          },
+        },
         specialization: true,
       },
       skip: 15 * (Number(data.page) - 1),
