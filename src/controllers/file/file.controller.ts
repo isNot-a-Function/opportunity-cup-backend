@@ -14,7 +14,7 @@ export const UploadFileController = async (req: FastifyRequest, reply: FastifyRe
     for await (const part of parts) {
       const file = await part.toBuffer();
 
-      const filename = `${cuid()}_${part.filename}`;
+      const filename = `${cuid()}`;
 
       const fileUrl = await awsS3API.uploadFile(file, filename);
 
