@@ -132,6 +132,17 @@ export const ResponseOrderController = async (
       },
     });
 
+    await prisma.order.update({
+      data: {
+        responsesCount: {
+          increment: 1,
+        },
+      },
+      where: {
+        id: data.orderId,
+      },
+    });
+
     reply
       .status(200)
       .send({
