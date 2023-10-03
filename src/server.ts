@@ -15,6 +15,7 @@ import { orderRouter } from './routes/order.routes';
 import { balanceRouter } from './routes/balance.routes';
 import { executorRouter } from './routes/executor.routes';
 import { specializationRouter } from './routes/specialization.routes';
+import { customerRouter } from './routes/customer.routes';
 
 const server = fastify();
 
@@ -91,6 +92,10 @@ export const startServer = async () => {
 
     await server.register(balanceRouter, {
       prefix: '/api/balance',
+    });
+
+    await server.register(customerRouter, {
+      prefix: '/api/customer',
     });
 
     await server.ready().then(() => {

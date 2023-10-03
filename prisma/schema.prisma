@@ -36,6 +36,8 @@ model ExecutorInfo {
   expirience      ExpirienceEnum   @default(lessYear)
   costType        CostTypeEnum     @default(none)
   cost            Float?
+  activeOrders    Order[]          @relation(name: "Active")
+  doneOrders      Order[]          @relation(name: "Done")
 }
 
 model CustomerInfo {
@@ -64,6 +66,10 @@ model Order {
   responsesCount   Int             @default(0)
   specialization   Specialization  @relation(fields: [specializationId], references: [id])
   specializationId String
+  executor         ExecutorInfo?   @relation(fields: [executorId], references: [id], name: "Active")
+  executorId       String?
+  doneExecutor     ExecutorInfo?   @relation(fields: [doneExecutorId], references: [id], name: "Done")
+  doneExecutorId   String?
 }
 
 model Response {
@@ -74,6 +80,8 @@ model Response {
   executor   ExecutorInfo @relation(fields: [executorId], references: [id])
   executorId String
   comment    String
+
+  @@unique([orderId, executorId])
 }
 
 model Specialization {

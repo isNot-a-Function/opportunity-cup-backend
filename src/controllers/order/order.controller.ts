@@ -334,6 +334,8 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
     const order = await prisma.order.findUnique({
       include: {
         customer: true,
+        doneExecutor: true,
+        executor: true,
         responses: {
           include: {
             executor: true,
@@ -580,6 +582,8 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
       const orders = await prisma.order.findMany({
         include: {
           customer: true,
+          doneExecutor: true,
+          executor: true,
           responses: {
             include: {
               executor: true,
@@ -693,6 +697,8 @@ export const GetUserOrdersController = async (
       const orders = await prisma.order.findMany({
         include: {
           customer: true,
+          doneExecutor: true,
+          executor: true,
           responses: {
             include: {
               executor: true,
