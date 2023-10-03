@@ -12,6 +12,7 @@ import { authRouter } from './routes/auth.routes';
 import { userRouter } from './routes/user.routes';
 import { checkRouter } from './routes/check.routes';
 import { orderRouter } from './routes/order.routes';
+import { balanceRouter } from './routes/balance.routes';
 import { executorRouter } from './routes/executor.routes';
 import { specializationRouter } from './routes/specialization.routes';
 
@@ -86,6 +87,10 @@ export const startServer = async () => {
 
     await server.register(fileRouter, {
       prefix: '/api/file',
+    });
+
+    await server.register(balanceRouter, {
+      prefix: '/api/balance',
     });
 
     await server.ready().then(() => {

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const TopUpBalanceOrderSchema = z.object({
+export const TopUpBalanceSchema = z.object({
   sum: z
     .number(),
 }).strict();
