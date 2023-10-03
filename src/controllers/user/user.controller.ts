@@ -169,8 +169,6 @@ export const GetUserController = async (
   reply: FastifyReply,
 ) => {
   try {
-    const data = GetUserSchema.parse(req.body);
-
     const findUser = await prisma.user.findUnique({
       include: {
         contact: true,
