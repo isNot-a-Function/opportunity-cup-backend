@@ -12,7 +12,7 @@ export const UploadFileController = async (req: FastifyRequest, reply: FastifyRe
     let files: string[] = [];
 
     for await (const part of parts) {
-      logger.info(part);
+      logger.info(JSON.stringify(part));
 
       const file = await part.toBuffer();
 
