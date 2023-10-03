@@ -8,7 +8,8 @@ export const UploadFileController = async (req: FastifyRequest, reply: FastifyRe
   try {
     const parts = req.files();
 
-    const files: string[] = [];
+    // eslint-disable-next-line prefer-const
+    let files: string[] = [];
 
     for await (const part of parts) {
       const file = await part.toBuffer();
