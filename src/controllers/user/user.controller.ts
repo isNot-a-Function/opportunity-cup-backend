@@ -26,8 +26,6 @@ export const ChangeRoleController = async (req: FastifyRequest, reply: FastifyRe
       throw new NotAuthorizedError();
     }
 
-    console.log(user);
-
     const updatedUser = await prisma.user.update({
       data: {
         role: user.role === 'executor' ? 'customer' : 'executor',

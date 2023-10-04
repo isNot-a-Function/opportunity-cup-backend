@@ -584,6 +584,8 @@ export const GetMyOrdersController = async (
 
     const data = req.query;
 
+    console.log(data.page);
+
     let orders: Order[];
 
     let ordersCount: number;
