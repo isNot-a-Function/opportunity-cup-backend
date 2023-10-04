@@ -593,7 +593,11 @@ export const GetMyOrdersController = async (
           executor: true,
           responses: {
             include: {
-              executor: true,
+              executor: {
+                include: {
+                  user: true,
+                },
+              },
             },
           },
           specialization: true,
@@ -632,7 +636,11 @@ export const GetMyOrdersController = async (
             executor: true,
             responses: {
               include: {
-                executor: true,
+                executor: {
+                  include: {
+                    user: true,
+                  },
+                },
               },
             },
             specialization: true,
@@ -672,7 +680,11 @@ export const GetMyOrdersController = async (
             executor: true,
             responses: {
               include: {
-                executor: true,
+                executor: {
+                  include: {
+                    user: true,
+                  },
+                },
               },
             },
             specialization: true,
@@ -711,7 +723,11 @@ export const GetMyOrdersController = async (
           executor: true,
           responses: {
             include: {
-              executor: true,
+              executor: {
+                include: {
+                  user: true,
+                },
+              },
             },
           },
           specialization: true,
@@ -749,7 +765,11 @@ export const GetMyOrdersController = async (
           executor: true,
           responses: {
             include: {
-              executor: true,
+              executor: {
+                include: {
+                  user: true,
+                },
+              },
             },
           },
           specialization: true,
@@ -787,7 +807,11 @@ export const GetMyOrdersController = async (
           executor: true,
           responses: {
             include: {
-              executor: true,
+              executor: {
+                include: {
+                  user: true,
+                },
+              },
             },
           },
           specialization: true,
@@ -831,7 +855,11 @@ export const GetMyOrdersController = async (
           executor: true,
           responses: {
             include: {
-              executor: true,
+              executor: {
+                include: {
+                  user: true,
+                },
+              },
             },
           },
           specialization: true,
