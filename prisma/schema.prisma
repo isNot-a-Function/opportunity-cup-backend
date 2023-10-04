@@ -27,10 +27,10 @@ model User {
 
 model ExecutorInfo {
   id              String           @id @default(uuid())
-  user            User             @relation(fields: [userId], references: [id])
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          String           @unique
   responses       Response[]
-  rating          Float?           @default(0)
+  rating          Float?           @default(5)
   description     String?
   classification  String?
   tags            String[]
@@ -54,7 +54,7 @@ model Order {
   id               String          @id @default(uuid())
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
-  customer         CustomerInfo    @relation(fields: [customerId], references: [id])
+  customer         CustomerInfo    @relation(fields: [customerId], references: [id], onDelete: Cascade)
   customerId       String
   status           OrderStatusEnum @default(active)
   title            String
@@ -66,20 +66,20 @@ model Order {
   cost             Float?
   responses        Response[]
   responsesCount   Int             @default(0)
-  specialization   Specialization  @relation(fields: [specializationId], references: [id])
+  specialization   Specialization  @relation(fields: [specializationId], references: [id], onDelete: Cascade)
   specializationId String
-  executor         ExecutorInfo?   @relation(fields: [executorId], references: [id], name: "Active")
+  executor         ExecutorInfo?   @relation(fields: [executorId], references: [id], name: "Active", onDelete: Cascade)
   executorId       String?
-  doneExecutor     ExecutorInfo?   @relation(fields: [doneExecutorId], references: [id], name: "Done")
+  doneExecutor     ExecutorInfo?   @relation(fields: [doneExecutorId], references: [id], name: "Done", onDelete: Cascade)
   doneExecutorId   String?
 }
 
 model Response {
   id         String       @id @default(uuid())
   createdAt  DateTime     @default(now())
-  order      Order        @relation(fields: [orderId], references: [id])
+  order      Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId    String
-  executor   ExecutorInfo @relation(fields: [executorId], references: [id])
+  executor   ExecutorInfo @relation(fields: [executorId], references: [id], onDelete: Cascade)
   executorId String
   comment    String
 
@@ -96,7 +96,7 @@ model Specialization {
 
 model Contact {
   id       String  @id @default(uuid())
-  user     User    @relation(fields: [userId], references: [id])
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   String  @unique
   site     String?
   phone    String?
@@ -109,7 +109,7 @@ model TopUpBalance {
   createdAt DateTime @default(now())
   sum       Float
   reason    String
-  toUser    User?    @relation(fields: [toUserId], references: [id])
+  toUser    User?    @relation(fields: [toUserId], references: [id], onDelete: Cascade)
   toUserId  String?
 }
 
@@ -118,7 +118,7 @@ model DecreaseBalance {
   createdAt  DateTime @default(now())
   sum        Float
   reason     String
-  fromUser   User?    @relation(fields: [fromUserId], references: [id])
+  fromUser   User?    @relation(fields: [fromUserId], references: [id], onDelete: Cascade)
   fromUserId String?
 }
 
