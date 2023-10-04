@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
 
+import { Order } from '@prisma/client';
 import prisma from '../../prisma';
 import { logger } from '../../log';
 
@@ -22,6 +23,7 @@ import {
   ActiveOrderSchema,
   ArchiveOrderSchema,
   CreateOrderSchema,
+  GetMyOrdersSchema,
   GetOrderSchema,
   GetOrdersSchema,
   UpdateOrderSchema,
@@ -30,6 +32,7 @@ import {
   IActiveOrder,
   IArchiveOrder,
   ICreateOrder,
+  IGetMyOrders,
   IGetOrder,
   IGetOrders,
   IGetUserOrders,
@@ -564,7 +567,10 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
   }
 };
 
-export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: IGetOrders }>, reply: FastifyReply) => {
+export const GetMyOrdersController = async (
+  req: FastifyRequest<{ Querystring: IGetMyOrders }>,
+  reply: FastifyReply,
+) => {
   try {
     if (!req.headers.authorization) {
       throw new NotTokenError();
@@ -576,72 +582,207 @@ export const GetMyOrdersController = async (req: FastifyRequest<{ Querystring: I
       throw new NotAuthorizedError();
     }
 
-    const data = GetOrdersSchema.parse(req.query);
+    const data = GetMyOrdersSchema.parse(req.query);
+
+    let orders: Order[];
+
+    let ordersCount: number;
 
     if (!data.page) {
-      const orders = await prisma.order.findMany({
-        include: {
-          customer: true,
-          doneExecutor: true,
-          executor: true,
-          responses: {
+      switch (data.filter) {
+        case 'active':
+          orders = await prisma.order.findMany({
             include: {
+              customer: true,
+              doneExecutor: true,
               executor: true,
+              responses: {
+                include: {
+                  executor: true,
+                },
+              },
+              specialization: true,
             },
-          },
-          specialization: true,
-        },
-        where: {
-          customer: {
-            userId: user.userId,
-          },
-        },
-      });
+            where: {
+              customer: {
+                userId: user.userId,
+              },
+              status: 'active',
+            },
+          });
 
-      const ordersCount = await prisma.order.count({
-        where: {
-          customer: {
-            userId: user.userId,
-          },
-        },
-      });
+          ordersCount = await prisma.order.count({
+            where: {
+              customer: {
+                userId: user.userId,
+              },
+              status: 'active',
+            },
+          });
 
-      reply
-        .status(DataSendSuccessStatus)
-        .send({
-          count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
-          orders,
-        });
+          return;
+        case 'processed':
+          orders = await prisma.order.findMany({
+            include: {
+              customer: true,
+              doneExecutor: true,
+              executor: true,
+              responses: {
+                include: {
+                  executor: true,
+                },
+              },
+              specialization: true,
+            },
+            where: {
+              customer: {
+                userId: user.userId,
+              },
+              status: 'inProcess',
+            },
+          });
 
-      return;
+          ordersCount = await prisma.order.count({
+            where: {
+              customer: {
+                userId: user.userId,
+              },
+              status: 'inProcess',
+            },
+          });
+
+          return;
+        case 'done':
+          orders = await prisma.order.findMany({
+            include: {
+              customer: true,
+              doneExecutor: true,
+              executor: true,
+              responses: {
+                include: {
+                  executor: true,
+                },
+              },
+              specialization: true,
+            },
+            where: {
+              customer: {
+                userId: user.userId,
+              },
+              status: 'done',
+            },
+          });
+
+          ordersCount = await prisma.order.count({
+            where: {
+              customer: {
+                userId: user.userId,
+              },
+              status: 'done',
+            },
+          });
+
+          return;
+        case 'archived':
+          orders = await prisma.order.findMany({
+            include: {
+              customer: true,
+              doneExecutor: true,
+              executor: true,
+              responses: {
+                include: {
+                  executor: true,
+                },
+              },
+              specialization: true,
+            },
+            where: {
+              customer: {
+                userId: user.userId,
+              },
+              status: 'archived',
+            },
+          });
+
+          ordersCount = await prisma.order.count({
+            where: {
+              customer: {
+                userId: user.userId,
+              },
+              status: 'archived',
+            },
+          });
+
+          return;
+        case 'responses':
+          orders = await prisma.order.findMany({
+            include: {
+              customer: true,
+              doneExecutor: true,
+              executor: true,
+              responses: {
+                include: {
+                  executor: true,
+                },
+              },
+              specialization: true,
+            },
+            where: {
+              responses: {
+                every: {
+                  executor: {
+                    userId: user.userId,
+                  },
+                },
+              },
+            },
+          });
+
+          ordersCount = await prisma.order.count({
+            where: {
+              responses: {
+                every: {
+                  executor: {
+                    userId: user.userId,
+                  },
+                },
+              },
+            },
+          });
+
+          return;
+        default:
+          orders = await prisma.order.findMany({
+            include: {
+              customer: true,
+              doneExecutor: true,
+              executor: true,
+              responses: {
+                include: {
+                  executor: true,
+                },
+              },
+              specialization: true,
+            },
+            where: {
+              customer: {
+                userId: user.userId,
+              },
+            },
+          });
+
+          ordersCount = await prisma.order.count({
+            where: {
+              customer: {
+                userId: user.userId,
+              },
+              status: 'active',
+            },
+          });
+
+          return;
+      }
     }
-
-    const orders = await prisma.order.findMany({
-      include: {
-        customer: true,
-        responses: {
-          include: {
-            executor: true,
-          },
-        },
-        specialization: true,
-      },
-      skip: 15 * (Number(data.page) - 1),
-      take: 15,
-      where: {
-        customer: {
-          userId: user.userId,
-        },
-      },
-    });
-
-    const ordersCount = await prisma.order.count({
-      where: {
-        customer: {
-          userId: user.userId,
-        },
-      },
-    });
 
     reply
       .status(DataSendSuccessStatus)

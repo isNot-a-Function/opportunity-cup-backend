@@ -8,19 +8,21 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(uuid())
-  email        String        @unique
-  passwordHash String
-  role         UserRoleEnum  @default(executor)
-  executorInfo ExecutorInfo?
-  custoremInfo CustomerInfo?
-  name         String?
-  family       String?
-  dateOfBirth  DateTime?
-  city         String?
-  logo         String?
-  contact      Contact?
-  balance      Float?
+  id              String            @id @default(uuid())
+  email           String            @unique
+  passwordHash    String
+  role            UserRoleEnum      @default(executor)
+  executorInfo    ExecutorInfo?
+  custoremInfo    CustomerInfo?
+  name            String?
+  family          String?
+  dateOfBirth     DateTime?
+  city            String?
+  logo            String?
+  contact         Contact?
+  balance         Float?
+  topUpBalance    TopUpBalance[]
+  decreaseBalance DecreaseBalance[]
 }
 
 model ExecutorInfo {
@@ -102,6 +104,30 @@ model Contact {
   telegram String?
 }
 
+model TopUpBalance {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  sum       Float
+  reason    String
+  toUser    User?    @relation(fields: [toUserId], references: [id])
+  toUserId  String?
+}
+
+model DecreaseBalance {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  sum        Float
+  reason     String
+  fromUser   User?    @relation(fields: [fromUserId], references: [id])
+  fromUserId String?
+}
+
+// model CheckOrder {
+//   id        String   @id @default(uuid())
+//   createdAt DateTime @default(now())
+//   с
+// }
+
 enum UserRoleEnum {
   executor // Исполнитель
   customer // Заказчик
@@ -124,5 +150,7 @@ enum ExpirienceEnum {
 
 enum OrderStatusEnum {
   active
+  inProcess
   archived
+  done
 }

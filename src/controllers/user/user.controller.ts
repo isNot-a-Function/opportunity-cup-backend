@@ -11,7 +11,7 @@ import { logger } from '../../log';
 import { NotAuthorizedError, NotTokenError } from '../../error/auth';
 import { ValidationErrorStatus, ValidationErrorMessage } from '../../error/base';
 import { createRefreshToken, createToken, verifyAccessToken } from '../../integrations/jwt';
-import { AddLogoSchema, GetUserSchema } from './user.validator';
+import { AddLogoSchema } from './user.validator';
 import { IAddLogo, IGetUser } from './user.interface';
 
 export const ChangeRoleController = async (req: FastifyRequest, reply: FastifyReply) => {
@@ -173,7 +173,9 @@ export const GetUserController = async (
       include: {
         contact: true,
         custoremInfo: true,
+        decreaseBalance: true,
         executorInfo: true,
+        topUpBalance: true,
       },
       where: {
         id: req.params.userId,

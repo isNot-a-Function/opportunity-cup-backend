@@ -14,3 +14,17 @@ export interface IResponseOrder {
   orderId: string;
   comment: string;
 }
+
+export interface IAcceptOrder {
+  orderId: string;
+}
+
+export interface IDeclineOrder {
+  orderId: string;
+}
+
+export interface IDoneOrder {
+  orderId: string
+  comment: string
+  rating: number
+}

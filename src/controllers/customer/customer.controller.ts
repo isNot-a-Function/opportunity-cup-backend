@@ -40,11 +40,14 @@ export const PickExecutorController = async (
             id: response.executorId,
           },
         },
+        status: 'inProcess',
       },
       where: {
         id: data.orderId,
       },
     });
+
+    // TODO: Отправить сообщение исполнителю
   } catch (error) {
     if (error instanceof ZodError) {
       reply
@@ -105,10 +108,19 @@ export const UnPickExecutorController = async (
       },
     });
 
+    await prisma.order.update({
+      data: {
+        status: 'active',
+      },
+      where: {
+        id: response.orderId,
+      },
+    });
+
     await prisma.executorInfo.update({
       data: {
         activeOrders: {
-          disconnect: {
+          delete: {
             id: data.orderId,
           },
         },

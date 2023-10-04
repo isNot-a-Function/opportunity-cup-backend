@@ -86,6 +86,14 @@ export const GetOrdersSchema = z.object({
     .optional(),
 }).strict();
 
+export const GetMyOrdersSchema = z.object({
+  filter: z
+    .enum(['active', 'processed', 'done', 'archived', 'responses']),
+  page: z
+    .string()
+    .optional(),
+}).strict();
+
 export const GetOrderSchema = z.object({
   orderId: z
     .string()

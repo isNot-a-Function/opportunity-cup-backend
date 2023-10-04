@@ -45,3 +45,26 @@ export const ResponseOrderSchema = z.object({
     .string()
     .nonempty(),
 }).strict();
+
+export const AcceptOrderSchema = z.object({
+  orderId: z
+    .string()
+    .nonempty(),
+}).strict();
+
+export const DeclineOrderSchema = z.object({
+  orderId: z
+    .string()
+    .nonempty(),
+}).strict();
+
+export const DoneOrderSchema = z.object({
+  comment: z
+    .string()
+    .nonempty(),
+  orderId: z
+    .string()
+    .nonempty(),
+  rating: z
+    .number(),
+}).strict();

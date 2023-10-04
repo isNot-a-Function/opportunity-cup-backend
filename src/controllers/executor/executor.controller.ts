@@ -9,8 +9,8 @@ import { ValidationErrorStatus, ValidationErrorMessage } from '../../error/base'
 import { verifyAccessToken } from '../../integrations/jwt';
 
 import { logger } from '../../log';
-import { IResponseOrder, IUpdateExecutorInfo } from './executor.interface';
-import { ResponseOrderSchema, UpdateExecutorSchema } from './executor.validator';
+import { IDeclineOrder, IDoneOrder, IResponseOrder, IUpdateExecutorInfo } from './executor.interface';
+import { DeclineOrderSchema, DoneOrderSchema, ResponseOrderSchema, UpdateExecutorSchema } from './executor.validator';
 
 export const UpdateExecutorInfoController = async (
   req: FastifyRequest<{ Body: IUpdateExecutorInfo }>,
@@ -156,6 +156,123 @@ export const ResponseOrderController = async (
       .send({
         message: 'Отклик отправлен',
       });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      reply
+        .status(ValidationErrorStatus)
+        .send({
+          message: ValidationErrorMessage,
+        });
+    }
+
+    if (error instanceof NotAuthorizedError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
+    if (error instanceof NotTokenError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
+  }
+};
+
+export const DeclineOderController = async (
+  req: FastifyRequest<{ Body: IDeclineOrder }>,
+  reply: FastifyReply,
+) => {
+  try {
+    if (!req.headers.authorization) {
+      throw new NotTokenError();
+    }
+
+    const user = verifyAccessToken(req.headers.authorization);
+
+    if (typeof user === 'string') {
+      throw new NotAuthorizedError();
+    }
+
+    const data = DeclineOrderSchema.parse(req.body);
+
+    await prisma.response.delete({
+      where: {
+        orderId_executorId: {
+          executorId: user.userId,
+          orderId: data.orderId,
+        },
+      },
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      reply
+        .status(ValidationErrorStatus)
+        .send({
+          message: ValidationErrorMessage,
+        });
+    }
+
+    if (error instanceof NotAuthorizedError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
+    if (error instanceof NotTokenError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
+  }
+};
+
+export const DoneOderController = async (
+  req: FastifyRequest<{ Body: IDoneOrder }>,
+  reply: FastifyReply,
+) => {
+  try {
+    if (!req.headers.authorization) {
+      throw new NotTokenError();
+    }
+
+    const user = verifyAccessToken(req.headers.authorization);
+
+    if (typeof user === 'string') {
+      throw new NotAuthorizedError();
+    }
+
+    const data = DoneOrderSchema.parse(req.body);
+
+    // TODO: Отправить сообщение заказчику
   } catch (error) {
     if (error instanceof ZodError) {
       reply

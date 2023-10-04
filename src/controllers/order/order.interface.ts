@@ -37,6 +37,11 @@ export interface IGetOrders {
   page: string;
 }
 
+export interface IGetMyOrders {
+  filter: 'active' | 'processed' | 'done' | 'archived' | 'responses'
+  page: string;
+}
+
 export interface IGetUserOrders {
   userId: string;
 }
