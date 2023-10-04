@@ -582,7 +582,7 @@ export const GetMyOrdersController = async (
       throw new NotAuthorizedError();
     }
 
-    const data = GetMyOrdersSchema.parse(req.query);
+    const data = req.query;
 
     let orders: Order[];
 
