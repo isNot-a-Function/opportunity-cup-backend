@@ -603,6 +603,8 @@ export const GetMyOrdersController = async (
               },
               specialization: true,
             },
+            skip: 15 * (Number(data.page) - 1),
+            take: 15,
             where: {
               customer: {
                 userId: user.userId,
@@ -634,6 +636,8 @@ export const GetMyOrdersController = async (
               },
               specialization: true,
             },
+            skip: 15 * (Number(data.page) - 1),
+            take: 15,
             where: {
               customer: {
                 userId: user.userId,
@@ -665,6 +669,8 @@ export const GetMyOrdersController = async (
               },
               specialization: true,
             },
+            skip: 15 * (Number(data.page) - 1),
+            take: 15,
             where: {
               customer: {
                 userId: user.userId,
@@ -696,6 +702,8 @@ export const GetMyOrdersController = async (
               },
               specialization: true,
             },
+            skip: 15 * (Number(data.page) - 1),
+            take: 15,
             where: {
               customer: {
                 userId: user.userId,
@@ -727,6 +735,8 @@ export const GetMyOrdersController = async (
               },
               specialization: true,
             },
+            skip: 15 * (Number(data.page) - 1),
+            take: 15,
             where: {
               responses: {
                 every: {
@@ -764,6 +774,8 @@ export const GetMyOrdersController = async (
               },
               specialization: true,
             },
+            skip: 15 * (Number(data.page) - 1),
+            take: 15,
             where: {
               customer: {
                 userId: user.userId,
