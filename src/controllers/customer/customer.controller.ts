@@ -129,12 +129,6 @@ export const UnPickExecutorController = async (
         id: response.orderId,
       },
     });
-
-    await prisma.response.delete({
-      where: {
-        id: data.responseId,
-      },
-    });
   } catch (error) {
     if (error instanceof ZodError) {
       reply
