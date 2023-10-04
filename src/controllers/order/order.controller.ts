@@ -584,7 +584,7 @@ export const GetMyOrdersController = async (
 
     const data = req.query;
 
-    console.log(data.page);
+    console.log(data);
 
     let orders: Order[];
 
@@ -740,7 +740,7 @@ export const GetMyOrdersController = async (
           take: 15,
           where: {
             responses: {
-              every: {
+              some: {
                 executor: {
                   userId: user.userId,
                 },
