@@ -108,6 +108,19 @@ export const UnPickExecutorController = async (
       },
     });
 
+    await prisma.executorInfo.update({
+      data: {
+        activeOrders: {
+          disconnect: {
+            id: data.orderId,
+          },
+        },
+      },
+      where: {
+        id: response.executorId,
+      },
+    });
+
     await prisma.order.update({
       data: {
         status: 'active',
@@ -117,16 +130,9 @@ export const UnPickExecutorController = async (
       },
     });
 
-    await prisma.executorInfo.update({
-      data: {
-        activeOrders: {
-          delete: {
-            id: data.orderId,
-          },
-        },
-      },
+    await prisma.response.delete({
       where: {
-        id: response.executorId,
+        id: data.responseId,
       },
     });
   } catch (error) {
