@@ -624,43 +624,85 @@ export const GetMyOrdersController = async (
           orders,
         });
     } else if (data.filter === 'processed') {
-      const orders = await prisma.order.findMany({
-        include: {
-          customer: true,
-          doneExecutor: true,
-          executor: true,
-          responses: {
-            include: {
-              executor: true,
+      if (user.role === 'customer') {
+        const orders = await prisma.order.findMany({
+          include: {
+            customer: true,
+            doneExecutor: true,
+            executor: true,
+            responses: {
+              include: {
+                executor: true,
+              },
             },
+            specialization: true,
           },
-          specialization: true,
-        },
-        skip: 15 * (Number(data.page) - 1),
-        take: 15,
-        where: {
-          customer: {
-            userId: user.userId,
+          skip: 15 * (Number(data.page) - 1),
+          take: 15,
+          where: {
+            customer: {
+              userId: user.userId,
+            },
+            status: 'inProcess',
           },
-          status: 'inProcess',
-        },
-      });
-
-      const ordersCount = await prisma.order.count({
-        where: {
-          customer: {
-            userId: user.userId,
-          },
-          status: 'inProcess',
-        },
-      });
-
-      reply
-        .status(DataSendSuccessStatus)
-        .send({
-          count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
-          orders,
         });
+
+        const ordersCount = await prisma.order.count({
+          where: {
+            customer: {
+              userId: user.userId,
+            },
+            status: 'inProcess',
+          },
+        });
+
+        reply
+          .status(DataSendSuccessStatus)
+          .send({
+            count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
+            orders,
+          });
+      }
+
+      if (user.role === 'executor') {
+        const orders = await prisma.order.findMany({
+          include: {
+            customer: true,
+            doneExecutor: true,
+            executor: true,
+            responses: {
+              include: {
+                executor: true,
+              },
+            },
+            specialization: true,
+          },
+          skip: 15 * (Number(data.page) - 1),
+          take: 15,
+          where: {
+            executor: {
+              userId: user.userId,
+            },
+            status: 'inProcess',
+          },
+        });
+
+        const ordersCount = await prisma.order.count({
+          where: {
+            executor: {
+              userId: user.userId,
+            },
+            status: 'inProcess',
+          },
+        });
+
+        reply
+          .status(DataSendSuccessStatus)
+          .send({
+            count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
+            orders,
+          });
+      }
     } else if (data.filter === 'done') {
       const orders = await prisma.order.findMany({
         include: {
