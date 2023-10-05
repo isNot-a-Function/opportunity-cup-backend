@@ -45,6 +45,12 @@ export const TopUpBalanceController = async (req: FastifyRequest<{ Body: ITopUpB
         id: user.userId,
       },
     });
+
+    reply
+      .status(200)
+      .send({
+        message: 'Баланс пополнен',
+      });
   } catch (error) {
     if (error instanceof ZodError) {
       reply
@@ -121,6 +127,12 @@ export const DecreaseBalanceController = async (
         id: user.userId,
       },
     });
+
+    reply
+      .status(200)
+      .send({
+        message: 'Деньги выведены',
+      });
   } catch (error) {
     if (error instanceof ZodError) {
       reply
