@@ -455,7 +455,7 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
         .send({
           order,
           response: !!response,
-          status: order.executor.userId === user.userId,
+          status: order?.executor?.userId === user.userId,
           user: findUser,
         });
     }
