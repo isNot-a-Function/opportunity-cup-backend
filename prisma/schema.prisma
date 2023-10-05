@@ -65,6 +65,7 @@ model Order {
   costType         CostTypeEnum    @default(none)
   cost             Float?
   responses        Response[]
+  comment          String?
   responsesCount   Int             @default(0)
   specialization   Specialization  @relation(fields: [specializationId], references: [id], onDelete: Cascade)
   specializationId String
@@ -122,12 +123,6 @@ model DecreaseBalance {
   fromUserId String?
 }
 
-// model CheckOrder {
-//   id        String   @id @default(uuid())
-//   createdAt DateTime @default(now())
-//   с
-// }
-
 enum UserRoleEnum {
   executor // Исполнитель
   customer // Заказчик
@@ -151,6 +146,7 @@ enum ExpirienceEnum {
 enum OrderStatusEnum {
   active
   inProcess
+  inCheck
   archived
   done
 }

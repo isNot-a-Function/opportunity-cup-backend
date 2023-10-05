@@ -12,7 +12,7 @@ import { NotAuthorizedError, NotTokenError } from '../../error/auth';
 import { ValidationErrorStatus, ValidationErrorMessage } from '../../error/base';
 import { createRefreshToken, createToken, verifyAccessToken } from '../../integrations/jwt';
 import { AddLogoSchema } from './user.validator';
-import { IAddLogo, IGetUser, IGetUserBalance } from './user.interface';
+import { IAddLogo, IGetUserBalance } from './user.interface';
 
 export const ChangeRoleController = async (req: FastifyRequest, reply: FastifyReply) => {
   try {

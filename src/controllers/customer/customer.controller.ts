@@ -7,7 +7,7 @@ import { NotTokenError, NotAuthorizedError } from '../../error/auth';
 import { ValidationErrorStatus, ValidationErrorMessage } from '../../error/base';
 import { verifyAccessToken } from '../../integrations/jwt';
 import { logger } from '../../log';
-import { IPickExecutor, IUnPickExecutor } from './customer.interface';
+import { IApproveOrder, IPickExecutor, IUnPickExecutor } from './customer.interface';
 import { PickExecutorSchema, UnPickExecutorSchema } from './customer.validator';
 
 export const PickExecutorController = async (
@@ -18,7 +18,6 @@ export const PickExecutorController = async (
     if (!req.headers.authorization) {
       throw new NotTokenError();
     }
-
     const user = verifyAccessToken(req.headers.authorization);
 
     if (typeof user === 'string') {
@@ -129,6 +128,89 @@ export const UnPickExecutorController = async (
         id: response.orderId,
       },
     });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      reply
+        .status(ValidationErrorStatus)
+        .send({
+          message: ValidationErrorMessage,
+        });
+    }
+
+    if (error instanceof NotAuthorizedError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
+    if (error instanceof NotTokenError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
+  }
+};
+
+export const ApproveOrderController = async (
+  req: FastifyRequest<{ Body: IApproveOrder }>,
+  reply: FastifyReply,
+) => {
+  try {
+    if (!req.headers.authorization) {
+      throw new NotTokenError();
+    }
+
+    const user = verifyAccessToken(req.headers.authorization);
+
+    if (typeof user === 'string') {
+      throw new NotAuthorizedError();
+    }
+
+    const data = req.body;
+
+    const order = await prisma.order.findUnique({
+      where: {
+        id: data.orderId,
+      },
+    });
+
+    await prisma.response.delete({
+      where: {
+        orderId_executorId: {
+          executorId: order.doneExecutorId,
+          orderId: data.orderId,
+        },
+      },
+    });
+
+    await prisma.order.update({
+      data: {
+        status: 'done',
+      },
+      where: {
+        id: data.orderId,
+      },
+    });
+
+    reply
+      .status(200)
+      .send({
+        message: 'Выполнение подтверждено',
+      });
   } catch (error) {
     if (error instanceof ZodError) {
       reply

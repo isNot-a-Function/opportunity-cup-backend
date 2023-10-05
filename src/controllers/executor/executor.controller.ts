@@ -287,6 +287,26 @@ export const DoneOderController = async (
 
     const data = DoneOrderSchema.parse(req.body);
 
+    await prisma.order.update({
+      data: {
+        doneExecutor: {
+          connect: {
+            userId: user.userId,
+          },
+        },
+        status: 'inCheck',
+      },
+      where: {
+        id: data.orderId,
+      },
+    });
+
+    reply
+      .status(200)
+      .send({
+        message: 'Комментарий отправлен заказчику',
+      });
+
     // TODO: Отправить сообщение заказчику
   } catch (error) {
     if (error instanceof ZodError) {

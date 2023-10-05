@@ -2,7 +2,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
 
-import { Order } from '@prisma/client';
 import prisma from '../../prisma';
 import { logger } from '../../log';
 
@@ -24,7 +23,6 @@ import {
   ActiveOrderSchema,
   ArchiveOrderSchema,
   CreateOrderSchema,
-  GetMyOrdersSchema,
   GetOrderSchema,
   GetOrdersSchema,
   UpdateOrderSchema,
@@ -460,7 +458,6 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
         });
     }
   } catch (error) {
-    console.log(error);
     if (error instanceof ZodError) {
       reply
         .status(ValidationErrorStatus)

@@ -7,3 +7,7 @@ export interface IUnPickExecutor {
   orderId: string;
   responseId: string
 }
+
+export interface IApproveOrder {
+  orderId: string;
+}
