@@ -11,9 +11,9 @@ export const userRouter = (fastify: FastifyInstance, opts: any, next: (err?: Err
 
   fastify.post('/logo', AddLogoController);
 
-  fastify.get('/:userId', GetUserController);
+  fastify.get('/', GetUserController);
 
-  fastify.get('/balance/:userId', GetUserBalanceController);
+  fastify.get('/balance', GetUserBalanceController);
 
   next();
 };

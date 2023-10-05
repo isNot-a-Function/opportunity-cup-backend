@@ -12,7 +12,7 @@ import { NotAuthorizedError, NotTokenError } from '../../error/auth';
 import { ValidationErrorStatus, ValidationErrorMessage } from '../../error/base';
 import { createRefreshToken, createToken, verifyAccessToken } from '../../integrations/jwt';
 import { AddLogoSchema } from './user.validator';
-import { IAddLogo, IGetUser } from './user.interface';
+import { IAddLogo, IGetUser, IGetUserBalance } from './user.interface';
 
 export const ChangeRoleController = async (req: FastifyRequest, reply: FastifyReply) => {
   try {
@@ -165,10 +165,20 @@ export const AddLogoController = async (req: FastifyRequest<{ Body: IAddLogo }>,
 };
 
 export const GetUserController = async (
-  req: FastifyRequest<{ Params: IGetUser }>,
+  req: FastifyRequest,
   reply: FastifyReply,
 ) => {
   try {
+    if (!req.headers.authorization) {
+      throw new NotTokenError();
+    }
+
+    const user = verifyAccessToken(req.headers.authorization);
+
+    if (typeof user === 'string') {
+      throw new NotAuthorizedError();
+    }
+
     const findUser = await prisma.user.findUnique({
       include: {
         contact: true,
@@ -178,7 +188,7 @@ export const GetUserController = async (
         topUpBalance: true,
       },
       where: {
-        id: req.params.userId,
+        id: user.userId,
       },
     });
 
@@ -217,24 +227,65 @@ export const GetUserController = async (
 };
 
 export const GetUserBalanceController = async (
-  req: FastifyRequest<{ Params: IGetUser }>,
+  req: FastifyRequest<{ Querystring: IGetUserBalance }>,
   reply: FastifyReply,
 ) => {
   try {
-    const findUser = await prisma.user.findUnique({
-      include: {
-        decreaseBalance: true,
-        topUpBalance: true,
-      },
+    if (!req.headers.authorization) {
+      throw new NotTokenError();
+    }
+
+    const user = verifyAccessToken(req.headers.authorization);
+
+    if (typeof user === 'string') {
+      throw new NotAuthorizedError();
+    }
+
+    const data = req.query;
+
+    const topUpBalance = await prisma.topUpBalance.findMany({
+      skip: 15 * (Number(data.page) - 1),
+      take: 15,
       where: {
-        id: req.params.userId,
+        toUser: {
+          id: user.userId,
+        },
+      },
+    });
+
+    const decreaseBalance = await prisma.decreaseBalance.findMany({
+      skip: 15 * (Number(data.page) - 1),
+      take: 15,
+      where: {
+        fromUser: {
+          id: user.userId,
+        },
+      },
+    });
+
+    const topUpBalanceCount = await prisma.topUpBalance.count({
+      where: {
+        toUser: {
+          id: user.userId,
+        },
+      },
+    });
+
+    const decreaseBalanceCount = await prisma.decreaseBalance.count({
+      where: {
+        fromUser: {
+          id: user.userId,
+        },
       },
     });
 
     reply
       .status(DataSendSuccessStatus)
       .send({
-        user: findUser,
+        decreaseBalance,
+        decreaseBalanceCount,
+        topUpBalance,
+        topUpBalanceCount,
       });
   } catch (error) {
     if (error instanceof ZodError) {

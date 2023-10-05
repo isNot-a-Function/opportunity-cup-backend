@@ -5,3 +5,7 @@ export interface IGetUser {
 export interface IAddLogo {
   logo: string
 }
+
+export interface IGetUserBalance {
+  page?: string
+}
