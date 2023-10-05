@@ -451,6 +451,10 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
         },
       });
 
+      console.log('user.userId', user.userId);
+      console.log('response', response);
+      console.log('!!response', !!response);
+
       reply
         .send({
           order,
