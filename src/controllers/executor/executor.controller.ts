@@ -270,7 +270,7 @@ export const DeclineOderController = async (
   }
 };
 
-export const DoneOderController = async (
+export const DoneOrderController = async (
   req: FastifyRequest<{ Body: IDoneOrder }>,
   reply: FastifyReply,
 ) => {
