@@ -460,6 +460,7 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
         });
     }
   } catch (error) {
+    console.log(error);
     if (error instanceof ZodError) {
       reply
         .status(ValidationErrorStatus)

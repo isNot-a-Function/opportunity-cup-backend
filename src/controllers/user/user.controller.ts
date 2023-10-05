@@ -283,9 +283,13 @@ export const GetUserBalanceController = async (
       .status(DataSendSuccessStatus)
       .send({
         decreaseBalance,
-        decreaseBalanceCount,
+        decreaseBalanceCount: decreaseBalanceCount % 15 > 0
+          ? (decreaseBalanceCount - decreaseBalanceCount % 15) / 15 + 1
+          : decreaseBalanceCount,
         topUpBalance,
-        topUpBalanceCount,
+        topUpBalanceCount: topUpBalanceCount % 15 > 0
+          ? (topUpBalanceCount - topUpBalanceCount % 15) / 15 + 1
+          : topUpBalanceCount,
       });
   } catch (error) {
     if (error instanceof ZodError) {
