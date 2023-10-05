@@ -40,7 +40,7 @@ export interface IGetOrders {
 }
 
 export interface IGetMyOrders {
-  filter: 'active' | 'processed' | 'done' | 'archived' | 'responses'
+  filter: 'active' | 'processed' | 'done' | 'archived' | 'responses' | 'checked'
   page: string;
 }
 

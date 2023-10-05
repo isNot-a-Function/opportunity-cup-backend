@@ -94,7 +94,7 @@ export const GetOrdersSchema = z.object({
 
 export const GetMyOrdersSchema = z.object({
   filter: z
-    .enum(['active', 'processed', 'done', 'archived', 'responses']),
+    .enum(['active', 'processed', 'done', 'archived', 'responses', 'checked']),
   page: z
     .string()
     .optional(),
