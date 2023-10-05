@@ -210,10 +210,19 @@ export const DeclineOderController = async (
 
     const data = DeclineOrderSchema.parse(req.body);
 
+    const authUser = await prisma.user.findUnique({
+      include: {
+        executorInfo: true,
+      },
+      where: {
+        id: user.userId,
+      },
+    });
+
     await prisma.response.delete({
       where: {
         orderId_executorId: {
-          executorId: user.userId,
+          executorId: authUser.executorInfo.id,
           orderId: data.orderId,
         },
       },
