@@ -1,5 +1,10 @@
 import { FastifyInstance } from 'fastify';
-import { AddLogoController, ChangeRoleController, GetUserController } from '../controllers/user/user.controller';
+import {
+  AddLogoController,
+  ChangeRoleController,
+  GetUserBalanceController,
+  GetUserController,
+} from '../controllers/user/user.controller';
 
 export const userRouter = (fastify: FastifyInstance, opts: any, next: (err?: Error) => void) => {
   fastify.post('/change', ChangeRoleController);
@@ -7,6 +12,8 @@ export const userRouter = (fastify: FastifyInstance, opts: any, next: (err?: Err
   fastify.post('/logo', AddLogoController);
 
   fastify.get('/:userId', GetUserController);
+
+  fastify.get('/balance/:userId', GetUserBalanceController);
 
   next();
 };

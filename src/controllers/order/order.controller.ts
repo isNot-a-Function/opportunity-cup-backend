@@ -386,6 +386,8 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
       reply
         .send({
           order,
+          response: false,
+          status: false,
           user: findUser,
         });
 
@@ -418,7 +420,9 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
       reply
         .send({
           order,
+          response: false,
           responses,
+          status: true,
           user: findUser,
         });
     } else {
@@ -432,9 +436,20 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
         },
       });
 
+      const response = await prisma.response.findUnique({
+        where: {
+          orderId_executorId: {
+            executorId: user.userId,
+            orderId: order.id,
+          },
+        },
+      });
+
       reply
         .send({
           order,
+          response: !!response,
+          status: false,
           user: findUser,
         });
     }

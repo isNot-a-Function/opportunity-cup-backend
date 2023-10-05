@@ -215,3 +215,52 @@ export const GetUserController = async (
     }
   }
 };
+
+export const GetUserBalanceController = async (
+  req: FastifyRequest<{ Params: IGetUser }>,
+  reply: FastifyReply,
+) => {
+  try {
+    const findUser = await prisma.user.findUnique({
+      include: {
+        decreaseBalance: true,
+        topUpBalance: true,
+      },
+      where: {
+        id: req.params.userId,
+      },
+    });
+
+    reply
+      .status(DataSendSuccessStatus)
+      .send({
+        user: findUser,
+      });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      reply
+        .status(ValidationErrorStatus)
+        .send({
+          message: ValidationErrorMessage,
+        });
+    }
+
+    if (error instanceof NotAuthorizedError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
+  }
+};
