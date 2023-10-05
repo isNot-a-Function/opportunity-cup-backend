@@ -26,7 +26,7 @@ export const TopUpBalanceController = async (req: FastifyRequest<{ Body: ITopUpB
     await prisma.topUpBalance.create({
       data: {
         reason: 'Пополнение баланса',
-        sum: data.sum,
+        sum: Number(data.sum),
         toUser: {
           connect: {
             id: user.userId,
@@ -38,7 +38,7 @@ export const TopUpBalanceController = async (req: FastifyRequest<{ Body: ITopUpB
     await prisma.user.update({
       data: {
         balance: {
-          increment: data.sum,
+          increment: Number(data.sum),
         },
       },
       where: {
@@ -107,14 +107,14 @@ export const DecreaseBalanceController = async (
           },
         },
         reason: 'Вывод',
-        sum: data.sum,
+        sum: Number(data.sum),
       },
     });
 
     await prisma.user.update({
       data: {
         balance: {
-          decrement: data.sum,
+          decrement: Number(data.sum),
         },
       },
       where: {
