@@ -504,7 +504,7 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
     if (data.filter) {
       where.specialization = {
         title: {
-          in: data.filter,
+          in: JSON.parse(data.filter),
         },
       };
     }

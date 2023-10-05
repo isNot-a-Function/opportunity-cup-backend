@@ -35,7 +35,7 @@ export interface IGetOrder {
 
 export interface IGetOrders {
   search?: string;
-  filter?: string[];
+  filter?: string;
   page: string;
 }
 
