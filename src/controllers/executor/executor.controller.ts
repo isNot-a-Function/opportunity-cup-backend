@@ -227,6 +227,12 @@ export const DeclineOderController = async (
         },
       },
     });
+
+    reply
+      .status(200)
+      .send({
+        message: 'Отклик удален',
+      });
   } catch (error) {
     if (error instanceof ZodError) {
       reply
