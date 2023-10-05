@@ -20,7 +20,7 @@ model User {
   city            String?
   logo            String?
   contact         Contact?
-  balance         Float?
+  balance         Float?            @default(0)
   topUpBalance    TopUpBalance[]
   decreaseBalance DecreaseBalance[]
 }
