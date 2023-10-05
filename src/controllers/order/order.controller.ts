@@ -1,3 +1,4 @@
+/* eslint-disable id-length */
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
 
@@ -478,36 +479,34 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
   try {
     const data = GetOrdersSchema.parse(req.query);
 
-    if (!data.page) {
-      const orders = await prisma.order.findMany({
-        include: {
-          customer: true,
-          responses: {
-            include: {
-              executor: true,
-            },
+    const where: any = {
+      status: 'active',
+    };
+
+    if (data.search) {
+      data.search = data.search.trim().replace(/ /g, ' & ');
+
+      where.OR = [
+        {
+          description: {
+            contains: data.search,
           },
-          specialization: true,
+          tags: {
+            has: data.search,
+          },
+          title: {
+            contains: data.search,
+          },
         },
-        where: {
-          status: 'active',
+      ];
+    }
+
+    if (data.filter) {
+      where.specialization = {
+        title: {
+          in: data.filter,
         },
-      });
-
-      const ordersCount = await prisma.order.count({
-        where: {
-          status: 'active',
-        },
-      });
-
-      reply
-        .status(DataSendSuccessStatus)
-        .send({
-          count: ordersCount % 15 > 0 ? (ordersCount - ordersCount % 15) / 15 + 1 : ordersCount,
-          orders,
-        });
-
-      return;
+      };
     }
 
     const orders = await prisma.order.findMany({
@@ -522,15 +521,11 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
       },
       skip: 15 * (Number(data.page) - 1),
       take: 15,
-      where: {
-        status: 'active',
-      },
+      where,
     });
 
     const ordersCount = await prisma.order.count({
-      where: {
-        status: 'active',
-      },
+      where,
     });
 
     reply

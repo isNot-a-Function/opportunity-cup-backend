@@ -81,7 +81,15 @@ export const ActiveOrderSchema = z.object({
 }).strict();
 
 export const GetOrdersSchema = z.object({
+  filter: z
+    .array(
+      z.string(),
+    )
+    .optional(),
   page: z
+    .string()
+    .optional(),
+  search: z
     .string()
     .optional(),
 }).strict();
