@@ -554,6 +554,8 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
     if (data.search) {
       data.search = data.search.trim().replace(/ /g, ' & ');
 
+      console.log(data.search);
+
       where.OR = [
         {
           description: {
