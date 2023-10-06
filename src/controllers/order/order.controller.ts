@@ -560,14 +560,12 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
         {
           description: {
             contains: data.search,
-            mode: 'insensitive',
           },
           tags: {
             has: data.search,
           },
           title: {
             contains: data.search,
-            mode: 'insensitive',
           },
         },
       ];
