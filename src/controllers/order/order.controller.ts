@@ -547,32 +547,26 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
   try {
     const data = GetOrdersSchema.parse(req.query);
 
-    const where: any = {};
+    const where: any = {
+      status: 'active',
+    };
 
     if (data.search) {
       data.search = data.search.trim().replace(/ /g, ' & ');
 
-      const where: any = {
-        status: 'active',
-        OR: [
-          {
-            description: {
-              contains: data.search,
-            },
-            tags: {
-              has: data.search,
-            },
-            title: {
-              contains: data.search,
-            },
+      where.OR = [
+        {
+          description: {
+            contains: data.search,
           },
-        ]
-    }
-
-    if (!data.search) {
-      const where: any = {
-        status: 'active',
-    }
+          tags: {
+            has: data.search,
+          },
+          title: {
+            contains: data.search,
+          },
+        },
+      ];
     }
 
     if (data.filter) {
