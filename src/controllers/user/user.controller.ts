@@ -28,7 +28,7 @@ export const UpdateUserController = async (req: FastifyRequest<{ Body: IUpdateUs
 
     const data = req.body;
 
-    const updatedUser = await prisma.user.update({
+    await prisma.user.update({
       data: {
         family: data.family,
         name: data.name,
@@ -38,31 +38,10 @@ export const UpdateUserController = async (req: FastifyRequest<{ Body: IUpdateUs
       },
     });
 
-    if (!updatedUser) {
-      throw new Error('Updated error');
-    }
-
-    const accessToken = createToken(updatedUser);
-    const refreshToken = createRefreshToken(updatedUser);
-
     reply
-      .status(ChangeRoleSuccessStatus)
-      .cookie('refreshToken', refreshToken,
-        {
-          httpOnly: refreshTokenConfiguration.httpOnly,
-          maxAge: refreshTokenConfiguration.maxAge,
-          sameSite: refreshTokenConfiguration.sameSite,
-          secure: refreshTokenConfiguration.secure,
-        },
-      )
+      .status(200)
       .send({
-        message: ChangeRoleSuccessMessage,
-        token: accessToken,
-        user: {
-          email: updatedUser.email,
-          id: updatedUser.id,
-          role: updatedUser.role,
-        },
+        message: 'Данные обновлены',
       });
   } catch (error) {
     if (error instanceof NotAuthorizedError) {
