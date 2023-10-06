@@ -577,8 +577,6 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
       };
     }
 
-    console.log(where);
-
     const orders = await prisma.order.findMany({
       include: {
         customer: true,
