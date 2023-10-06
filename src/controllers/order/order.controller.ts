@@ -347,7 +347,16 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
           },
         },
         doneExecutor: true,
-        executor: true,
+        executor: {
+          include: {
+            user: {
+              select: {
+                family: true,
+                name: true,
+              },
+            },
+          },
+        },
         responses: {
           include: {
             executor: {
