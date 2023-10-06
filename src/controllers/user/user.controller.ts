@@ -12,7 +12,94 @@ import { NotAuthorizedError, NotTokenError } from '../../error/auth';
 import { ValidationErrorStatus, ValidationErrorMessage } from '../../error/base';
 import { createRefreshToken, createToken, verifyAccessToken } from '../../integrations/jwt';
 import { AddLogoSchema } from './user.validator';
-import { IAddLogo, IGetUserBalance } from './user.interface';
+import { IAddLogo, IGetUserBalance, IUpdateUser } from './user.interface';
+
+export const UpdateUserController = async (req: FastifyRequest<{ Body: IUpdateUser }>, reply: FastifyReply) => {
+  try {
+    if (!req.headers.authorization) {
+      throw new NotTokenError();
+    }
+
+    const user = verifyAccessToken(req.headers.authorization);
+
+    if (typeof user === 'string') {
+      throw new NotAuthorizedError();
+    }
+
+    const data = req.body;
+
+    const updatedUser = await prisma.user.update({
+      data: {
+        family: data.family,
+        name: data.name,
+      },
+      where: {
+        id: user.userId,
+      },
+    });
+
+    if (!updatedUser) {
+      throw new Error('Updated error');
+    }
+
+    const accessToken = createToken(updatedUser);
+    const refreshToken = createRefreshToken(updatedUser);
+
+    reply
+      .status(ChangeRoleSuccessStatus)
+      .cookie('refreshToken', refreshToken,
+        {
+          httpOnly: refreshTokenConfiguration.httpOnly,
+          maxAge: refreshTokenConfiguration.maxAge,
+          sameSite: refreshTokenConfiguration.sameSite,
+          secure: refreshTokenConfiguration.secure,
+        },
+      )
+      .send({
+        message: ChangeRoleSuccessMessage,
+        token: accessToken,
+        user: {
+          email: updatedUser.email,
+          id: updatedUser.id,
+          role: updatedUser.role,
+        },
+      });
+  } catch (error) {
+    if (error instanceof NotAuthorizedError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
+    if (error instanceof ZodError) {
+      reply
+        .status(ValidationErrorStatus)
+        .send({
+          message: ValidationErrorMessage,
+        });
+    }
+
+    if (error instanceof NotTokenError) {
+      reply
+        .status(error.status)
+        .send({
+          message: error.message,
+        });
+    }
+
+    if (error instanceof Error) {
+      logger.error(error.message);
+
+      reply
+        .status(400)
+        .send({
+          message: error.message,
+        });
+    }
+  }
+};
 
 export const ChangeRoleController = async (req: FastifyRequest, reply: FastifyReply) => {
   try {

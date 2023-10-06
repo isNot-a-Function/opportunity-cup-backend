@@ -9,3 +9,8 @@ export interface IAddLogo {
 export interface IGetUserBalance {
   page?: string
 }
+
+export interface IUpdateUser {
+  name?: string | null;
+  family?: string | null;
+}
