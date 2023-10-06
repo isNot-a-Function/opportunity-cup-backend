@@ -420,6 +420,13 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
       });
 
       const responses = await prisma.response.findMany({
+        include: {
+          executor: {
+            select: {
+              rating: true,
+            },
+          },
+        },
         where: {
           orderId: order.id,
         },
@@ -490,6 +497,13 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
       });
 
       const response = await prisma.response.findUnique({
+        include: {
+          executor: {
+            select: {
+              rating: true,
+            },
+          },
+        },
         where: {
           orderId_executorId: {
             executorId: authUser.id,
