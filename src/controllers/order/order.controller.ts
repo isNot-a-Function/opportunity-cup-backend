@@ -561,7 +561,7 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
             mode: 'insensitive',
           },
           tags: {
-            hasSome: data.search,
+            has: data.search,
           },
           title: {
             contains: data.search,
