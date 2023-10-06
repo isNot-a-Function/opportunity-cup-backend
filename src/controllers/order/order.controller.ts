@@ -554,8 +554,6 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
     if (data.search) {
       data.search = data.search.trim().replace(/ /g, ' & ');
 
-      console.log(data.search);
-
       where.OR = [
         {
           description: {
@@ -578,6 +576,8 @@ export const GetOrdersController = async (req: FastifyRequest<{ Querystring: IGe
         },
       };
     }
+
+    console.log(where);
 
     const orders = await prisma.order.findMany({
       include: {
