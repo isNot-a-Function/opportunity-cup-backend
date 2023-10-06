@@ -225,7 +225,7 @@ export const ApproveOrderController = async (
     await prisma.user.update({
       data: {
         balance: {
-          decrement: order.cost ? order.cost : data.cost,
+          decrement: order.cost === 0 ? order.cost : data.cost,
         },
       },
       where: {
@@ -236,7 +236,7 @@ export const ApproveOrderController = async (
     await prisma.user.update({
       data: {
         balance: {
-          increment: order.cost ? order.cost : data.cost,
+          increment: order.cost === 0 ? order.cost : data.cost,
         },
       },
       where: {
