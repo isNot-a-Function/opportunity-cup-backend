@@ -424,19 +424,48 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
           user: findUser,
         });
     } else {
+      const authUser = await prisma.executorInfo.findUnique({
+        where: {
+          userId: user.userId,
+        },
+      });
+
+      const orderSome = await prisma.order.findUnique({
+        include: {
+          customer: true,
+          doneExecutor: true,
+          executor: true,
+          responses: {
+            include: {
+              executor: {
+                include: {
+                  user: {
+                    select: {
+                      family: true,
+                      name: true,
+                    },
+                  },
+                },
+              },
+            },
+            where: {
+              executorId: authUser.id,
+            },
+          },
+          specialization: true,
+        },
+        where: {
+          id: data.orderId,
+        },
+      });
+
       const findUser = await prisma.user.findUnique({
         include: {
           contact: true,
           custoremInfo: true,
         },
         where: {
-          id: order.customer.userId,
-        },
-      });
-
-      const authUser = await prisma.executorInfo.findUnique({
-        where: {
-          userId: user.userId,
+          id: orderSome.customer.userId,
         },
       });
 
@@ -444,14 +473,14 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
         where: {
           orderId_executorId: {
             executorId: authUser.id,
-            orderId: order.id,
+            orderId: orderSome.id,
           },
         },
       });
 
       reply
         .send({
-          order,
+          order: orderSome,
           response: !!response,
           status: order?.executor?.userId === user.userId,
           user: findUser,

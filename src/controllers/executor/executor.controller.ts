@@ -287,7 +287,7 @@ export const DoneOrderController = async (
 
     const data = DoneOrderSchema.parse(req.body);
 
-    await prisma.order.update({
+    const order = await prisma.order.update({
       data: {
         doneExecutor: {
           connect: {
@@ -296,8 +296,23 @@ export const DoneOrderController = async (
         },
         status: 'inCheck',
       },
+      include: {
+        customer: true,
+      },
       where: {
         id: data.orderId,
+      },
+    });
+
+    await prisma.customerInfo.update({
+      data: {
+        rating: (order.customer.rating * order.customer.ratingCount + data.rating) / (order.customer.ratingCount + 1),
+        ratingCount: {
+          increment: 1,
+        },
+      },
+      where: {
+        id: order.customerId,
       },
     });
 

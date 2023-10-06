@@ -183,6 +183,9 @@ export const ApproveOrderController = async (
     const data = req.body;
 
     const order = await prisma.order.findUnique({
+      include: {
+        doneExecutor: true,
+      },
       where: {
         id: data.orderId,
       },
@@ -203,6 +206,41 @@ export const ApproveOrderController = async (
       },
       where: {
         id: data.orderId,
+      },
+    });
+
+    await prisma.executorInfo.update({
+      data: {
+        rating: (order.doneExecutor.rating * order.doneExecutor.ratingCount + data.rating) /
+        (order.doneExecutor.ratingCount + 1),
+        ratingCount: {
+          increment: 1,
+        },
+      },
+      where: {
+        id: order.doneExecutorId,
+      },
+    });
+
+    await prisma.user.update({
+      data: {
+        balance: {
+          decrement: order.cost ? order.cost : data.cost,
+        },
+      },
+      where: {
+        id: user.userId,
+      },
+    });
+
+    await prisma.user.update({
+      data: {
+        balance: {
+          increment: order.cost ? order.cost : data.cost,
+        },
+      },
+      where: {
+        id: order.doneExecutor.userId,
       },
     });
 

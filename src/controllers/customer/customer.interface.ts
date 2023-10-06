@@ -11,4 +11,5 @@ export interface IUnPickExecutor {
 export interface IApproveOrder {
   orderId: string;
   rating: number;
+  cost?: number;
 }
