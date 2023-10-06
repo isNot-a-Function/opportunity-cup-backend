@@ -424,6 +424,12 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
           executor: {
             select: {
               rating: true,
+              user: {
+                select: {
+                  family: true,
+                  name: true,
+                },
+              },
             },
           },
         },
@@ -501,6 +507,12 @@ export const GetOrderController = async (req: FastifyRequest<{ Params: IGetOrder
           executor: {
             select: {
               rating: true,
+              user: {
+                select: {
+                  family: true,
+                  name: true,
+                },
+              },
             },
           },
         },
